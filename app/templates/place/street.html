@@ -1,0 +1,81 @@
+{% from "macros.html" import modal_delete with context %}
+{% extends "layout.html" %}
+
+{% block title %}Адреса{% endblock %}
+
+{% block content %}
+
+    <div class="row">
+        <div class="col-12">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{{ url_for('.city_view') }}">Города</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">{{ parent_place.city }}</li>
+                </ol>
+            </nav>
+        </div>
+    </div>
+
+    <div class="row">
+
+        <div class="col-xl-12">
+            <div class="card-box">
+                <div class="row mb-3">
+                    <div class="col-sm-9">
+                        <h4 class="header-title mb-3 ">
+                            Улицы/Районы
+                        </h4>
+                    </div>
+                    <div class="col-sm-3 float-right">
+                        <a class="btn btn-success float-right"
+                           href="{{ url_for('.street_create', city_id=parent_place.city_id) }}">Добавить</a>
+                    </div>
+                </div>
+
+                <div class="table-responsive table-format table-striped">
+                    <table class="table">
+                        <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Название</th>
+                            <th>Операции</th>
+                        </tr>
+                        </thead>
+                        {% for place in places %}
+                            <tr>
+                                <td>{{ place.id }}
+                                </td>
+                                <td>
+                                    <a class="table_link"
+                                       href="{{ url_for('.building_view', street_id=place.id) }}">{{ place.name }}</a>
+                                </td>
+                                <td>
+                                    <div class="dropdown">
+                                        <button class="btn btn-sm btn-primary dropdown-toggle" type="button"
+                                                id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true"
+                                                aria-expanded="false">
+                                            Операции
+                                        </button>
+                                        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                            <a class="dropdown-item"
+                                               href="{{ url_for('.street_edit', street_id=place.id) }}">Изменить</a>
+                                            <div class="dropdown-divider"></div>
+                                            <a class="dropdown-item"
+                                               data-href="{{ url_for('.street_delete', street_id=place.id) }}"
+                                               data-toggle="modal"
+                                               data-target="#modalDelete">
+                                                Удалить
+                                            </a>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {{ modal_delete('Удаление улицы/района') }}
+{% endblock %}

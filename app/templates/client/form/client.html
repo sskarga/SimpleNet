@@ -1,0 +1,37 @@
+{% from "macros.html" import make_form with context %}
+{% extends "layout.html" %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div class="card-header">
+    <h2>{{ title }}:
+        {% if  building  %}
+            <small class="text-muted">
+                {{ building.street.city.name }},
+                {{ building.street.name }},
+                {{ building.name }}
+            </small>
+        {% endif %}
+    </h2>
+  </div>
+    <div class="card-body">
+
+<form action="" method="post">
+    {{ make_form(form, style='rows', btn_submit=True) }}
+</form>
+
+</div>
+</div>
+{% endblock %}
+
+{% block footerJS %}
+{{ super() }}
+
+<script src="{{ url_for('static', filename='vendor/jquery.inputmask.min.js') }}"></script>
+<script>
+    $('#phone').inputmask('(999) 999-9999');
+</script>
+
+{% endblock %}

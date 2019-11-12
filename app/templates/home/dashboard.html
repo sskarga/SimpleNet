@@ -1,0 +1,80 @@
+{% extends "layout.html" %}
+{% block title %}Dashboard{% endblock %}
+{% block content %}
+    <div class="container my-5">
+
+        <div class="row mbr-justify-content-center">
+
+            <div class="col-lg-6 mbr-col-md-10">
+                <a class="dashboard-link" href="{{ url_for('client_bp.client_search_form') }}">
+                    <div class="wrap">
+                        <div class="ico-wrap">
+                            <span class="mbr-iconfont fa-address-card fa"></span>
+                        </div>
+                        <div class="text-wrap vcenter">
+                            <h2 class="mbr-fonts-style mbr-bold mbr-section-title3 display-5">
+                                Работа с клиентами</h2>
+                            <p class="mbr-fonts-style text1 mbr-text display-6">Управление клиентами и их услугами,
+                                поиск, подключение, тарифы...</p>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            <div class="col-lg-6 mbr-col-md-10">
+                <a class="dashboard-link" href="{{ url_for('client_bp.client_search') }}?p=wait">
+                    <div class="wrap">
+                        <div class="ico-wrap">
+                            <span class="mbr-iconfont fa-stopwatch fa"></span>
+                        </div>
+                        <div class="text-wrap vcenter">
+                            <h2 class="mbr-fonts-style mbr-bold mbr-section-title3 display-5">
+                                Ожидают подключения.
+                            </h2>
+                            <p class="mbr-fonts-style text1 mbr-text display-6">Клиенты ожидающие подключения к
+                                конечному узлу сети.</p>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            <div class="col-lg-6 mbr-col-md-10">
+                <a class="dashboard-link" href="{{ url_for('eqpt_bp.eqpt_search_form') }}">
+                    <div class="wrap">
+                        <div class="ico-wrap">
+                            <span class="mbr-iconfont fa-code-branch fa"></span>
+                        </div>
+                        <div class="text-wrap vcenter">
+                            <h2 class="mbr-fonts-style mbr-bold mbr-section-title3 display-5">
+                                Конечное оборудование
+                            </h2>
+                            <p class="mbr-fonts-style text1 mbr-text display-6">Управление конечным оборудование (узлы)
+                                и их портами, выделение адресов</p>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            <div class="col-lg-6 mbr-col-md-10">
+                <a class="dashboard-link" href="{{ url_for('place_bp.city_view') }}">
+                    <div class="wrap">
+                        <div class="ico-wrap">
+                            <span class="mbr-iconfont fa-globe fa"></span>
+                        </div>
+                        <div class="text-wrap vcenter">
+                            <h2 class="mbr-fonts-style mbr-bold mbr-section-title3 display-5">
+                                Справочник улиц и домов
+                            </h2>
+                            <p class="mbr-fonts-style text1 mbr-text display-6">Справочник всех улиц и домов где
+                                подключены клиенты и установлено оборудование.</p>
+                        </div>
+                    </div>
+                </a>
+            </div>
+
+        </div>
+
+    </div>
+{% endblock %}
+
+{% block headerStyle %}
+    {{ super() }}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+{% endblock %}

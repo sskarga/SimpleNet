@@ -1,0 +1,121 @@
+{% macro form_input(field) -%}
+    <div class="form-group row">
+        {{ field.label(class="col-sm-2 col-form-label") }}
+        <div class="col-sm-10">
+            {% if field.errors %}
+                {{ field(class="form-control is-invalid") }}
+                <div class="invalid-feedback">
+                    {% for error in field.errors %}
+                        {{ error }},
+                    {% endfor %}
+                </div>
+            {% else %}
+                {{ field(class="form-control") }}
+            {% endif %}
+        </div>
+    </div>
+{%- endmacro %}
+
+{% macro make_form(form, style='groups', btn_submit=None) -%}
+    {{ form.hidden_tag() }}
+
+    {% for field in form if field.widget.input_type != 'hidden' %}
+
+        {% if field.type != 'SubmitField' %}
+
+            {% if style == 'groups' %}
+                <div class="form-group">
+                    {{ field.label(class="col-form-label") }}
+                    {% if field.errors %}
+                        {{ field(class="form-control is-invalid") }}
+                        <div class="invalid-feedback">
+                            {% for error in field.errors %}
+                                {{ error }},
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        {{ field(class="form-control") }}
+                    {% endif %}
+                </div>
+            {% endif %}
+
+            {% if style == 'rows' %}
+
+                {% if field.widget.input_type == 'checkbox' %}
+                    <div class="form-group row">
+                        <div class="col-sm-2"></div>
+                        <div class="col-sm-10">
+                            <div class="form-check custom-control custom-checkbox mb-3">
+                                {{ field(class="form-check-input custom-control-input") }}
+                                {{ field.label(class="form-check-label custom-control-label") }}
+                            </div>
+                        </div>
+                    </div>
+
+                {% else %}
+
+                    <div class="form-group row">
+                        {{ field.label(class="col-sm-2 col-form-label") }}
+                        <div class="col-sm-10">
+                            {% if field.errors %}
+                                {{ field(class="form-control is-invalid") }}
+                                <div class="invalid-feedback">
+                                    {% for error in field.errors %}
+                                        {{ error }},
+                                    {% endfor %}
+                                </div>
+                            {% else %}
+                                {{ field(class="form-control") }}
+                            {% endif %}
+                        </div>
+                    </div>
+
+                {% endif %}
+
+            {% endif %}
+
+        {% else %}
+
+            {% if (style == 'rows') and btn_submit %}
+                <div class="form-group row">
+                    <div class="col-sm-10 offset-sm-2">
+                        <input class="btn btn-success" id="submit" name="submit" type="submit" value="Сохранить">
+                        <button type="button" class="btn btn-warning" onclick="window.history.back();">Назад</button>
+                    </div>
+                </div>
+            {% endif %}
+
+        {% endif %}
+
+    {% endfor %}
+
+
+
+{%- endmacro %}
+
+
+{% macro modal_delete(title='Удаление.', body='Вы дествительно хотите удалить?') -%}
+    <!-- Modal modalDelete -->
+    <div class="modal fade" id="modalDelete" tabindex="-1" role="dialog"
+         aria-labelledby="modalDelete" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">{{ title }}</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    {{ body }}
+                </div>
+                <div class="modal-footer">
+                    <a class="btn btn-danger text-white btn-ok">Удалить</a>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Закрыть
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{%- endmacro %}

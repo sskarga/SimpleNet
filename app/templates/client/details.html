@@ -1,0 +1,383 @@
+{% from "macros.html" import make_form with context %}
+{% extends "layout.html" %}
+
+{% block title %}Клиенты{% endblock %}
+
+{% block content %}
+
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="card-box">
+                <div class="row">
+                    <div class="col-sm-6">
+                        <h2><i class="fas fa-user"></i> Клиент: #{{ client.id }}</h2>
+                    </div>
+                    <div class="col-sm-6">
+                        <a class="btn btn-warning float-right"
+                           href="{{ url_for('client_bp.client_search_by_building', building_id=building.id) }}"><i class="fas fa-undo"></i> Вернуться</a>
+                        <a class="btn btn-primary float-right mx-2"
+                           href="{{ url_for('client_bp.client_search_form') }}"><i class="fas fa-search"></i> Поиск</a>
+                        <button class="btn btn-danger float-right ml-2" data-toggle="modal" data-target="#modalDelete">
+                            <i class="fas fa-trash-alt"></i> Удалить
+                        </button>
+                    </div>
+
+                    <!-- Modal modalDelete -->
+                    <div class="modal fade" id="modalDelete" tabindex="-1" role="dialog"
+                         aria-labelledby="modalDelete" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title">Удаление клиента</h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    Вы дествительно хотите удалить клиента?
+                                </div>
+                                <div class="modal-footer">
+                                    <a href="{{ url_for('.client_delete', client_id=client.id) }}"
+                                       class="btn btn-danger">Удалить</a>
+                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Закрыть
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="row px-3">
+                    <div class="col-sm-12 bd-callout bd-callout-warning">
+                        <h5>Примечание:
+                        <a class="btn btn-light float-right" href="{{ url_for(".client_edit_note", client_id=client.id) }}"><i
+                                class="fas fa-marker"></i></a>
+                        </h5>
+                        {% if client.note %}
+                            <p>{{ client.note }}</p>
+                        {% else %}
+                            <p>Нет заметок</p>
+                        {% endif %}
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+
+        <div class="col-lg-4">
+
+            <!-- Personal-Information -->
+            <div class="card-box ribbon-box">
+                <h5 class="header-title mt-0"><i class="fas fa-address-card"></i> Персональные данные:</h5>
+                <div class="panel-body">
+                    <hr>
+                    <ul class="list-group">
+                        <li class="d-flex justify-content-between align-items-center py-1">
+                            Фамилия И.О. :
+                            <span>{{ client.fio }}</span>
+                        </li>
+                        <li class="d-flex justify-content-between align-items-center py-1">
+                            Телефон :
+                            <span>{{ client.phone }}</span>
+                        </li>
+                    </ul>
+                </div>
+                <div class="d-flex justify-content-end mt-3">
+                    <button class="btn btn-primary btn-sm" data-toggle="modal" data-target="#modalPersonalForm">
+                        Изменить
+                    </button>
+                </div>
+            </div>
+
+            <!-- Modal PersonalForm -->
+            <div class="modal fade" id="modalPersonalForm" tabindex="-1" role="dialog"
+                 aria-labelledby="modalPersonalForm" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Изменить персональные данные</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <form action="{{ url_for('.client_edit_personal', client_id=client.id) }}" method="post">
+                            <div class="modal-body">
+                                {{ make_form(personal_form) }}
+                            </div>
+                            <div class="modal-footer">
+                                <button type="submit" class="btn btn-primary">Сохранить</button>
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Закрыть</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+        <div class="col-lg-4">
+
+            <!-- Address-->
+            <div class="card-box">
+                <h5 class="header-title mt-0"><i class="fas fa-map-marked-alt"></i> Адрес:</h5>
+                <div class="panel-body">
+                    <hr>
+                    <ul class="list-group">
+                        <li class="d-flex justify-content-between align-items-center py-1">
+                            {{ building.street.city.name }},
+                            {{ building.street.name }},
+                            {{ building.name }},
+                            {{ client.apartment }}
+                        </li>
+                    </ul>
+                </div>
+                <div class="d-flex justify-content-end mt-3">
+                    <button class="btn btn-primary btn-sm" data-toggle="modal" data-target="#modalAddressForm">
+                        Изменить
+                    </button>
+                </div>
+            </div>
+
+            <!-- Modal -->
+            <div class="modal fade" id="modalAddressForm" tabindex="-1" role="dialog"
+                 aria-labelledby="modalAddressForm" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Изменить адрес</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <form action="{{ url_for('.client_edit_address', client_id=client.id) }}" method="post">
+                            <div class="modal-body">
+
+                                <div class="form-group">
+                                    <select name="city" id="city" class="custom-select">
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <select name="street" id="street" class="custom-select">
+                                        <option value="">Выберите улицу/район</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <select name="building" id="building" class="custom-select">
+                                        <option value="">Выберите сооружение</option>
+                                    </select>
+                                </div>
+                                {{ make_form(address_form) }}
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Закрыть</button>
+                                <button type="submit" class="btn btn-primary">Сохранить</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+        <div class="col-lg-4">
+
+            <!-- Personal-Information -->
+            <div class="card-box ribbon-box">
+                <h5 class="header-title mt-0"><i class="fas fa-clock"></i> Изменения:</h5>
+                <div class="panel-body">
+                    <hr>
+                    <ul class="list-group">
+                        <li class="d-flex justify-content-between align-items-center py-1">
+                            Создан :
+                            <span>{{ moment(client.create_at).format('LLL') }}</span>
+                        </li>
+                        <li class="d-flex justify-content-between align-items-center py-1">
+                            Обновлен :
+                            <span>{{ moment(client.last_updated).calendar() }}</span>
+                        </li>
+                        <li class="d-flex justify-content-between align-items-center py-1">
+                            Отключен :
+                            {% if client.suspension_at %}
+                                <span>{{ moment(client.suspension_at).format('LLL') }}</span>
+                            {% endif %}
+                        </li>
+                    </ul>
+                </div>
+
+            </div>
+
+
+        </div>
+
+    </div>
+    <div class="row">
+        <div class="col-lg-4">
+            <!-- Service-->
+            <div class="card-box">
+                <h5 class="header-title mt-0"><i class="fas fa-tasks"></i> Услуги:</h5>
+                <div class="panel-body">
+                    <hr>
+                    <ul class="list-group">
+                        <li class="d-flex justify-content-between align-items-center py-1">
+                            Услуга :
+                            <span>{{ client.service.name }}</span>
+                        </li>
+                        <li class="d-flex justify-content-between align-items-center py-1">
+                            Статус :
+                            {% if client.status == 1 %}
+                                <span class="badge badge-success p-2">{{ client_status[client.status] }}</span>
+                            {% elif client.status > 1 %}
+                                <span class="badge badge-warning p-2">{{ client_status[client.status] }}</span>
+                            {% else %}
+                                <span class="badge badge-danger p-2">{{ client_status[client.status] }}</span>
+                            {% endif %}
+                        </li>
+                    </ul>
+                </div>
+                <div class="d-flex justify-content-end mt-3">
+                    <button class="btn btn-primary btn-sm" data-toggle="modal" data-target="#modalServiceForm">
+                        Изменить
+                    </button>
+                </div>
+            </div>
+
+            <!-- Modal -->
+            <div class="modal fade" id="modalServiceForm" tabindex="-1" role="dialog"
+                 aria-labelledby="modalServiceForm" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Изменить услугу</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <form action="{{ url_for('.client_edit_service', client_id=client.id) }}" method="post">
+                            <div class="modal-body">
+                                {{ make_form(service_form) }}
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Закрыть</button>
+                                <button type="submit" class="btn btn-primary">Сохранить</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-4">
+            <!-- Eqpt-->
+            <div class="card-box">
+                <h5 class="header-title mt-0"><i class="fas fa-network-wired"></i> Точка подключения:</h5>
+                <div class="panel-body">
+                    <hr>
+                    <ul class="list-group">
+                        <li class="d-flex justify-content-between align-items-center py-1">
+                            ID подключения:
+                            <span>{{ client.eqptport_id }}</span>
+                        </li>
+                    </ul>
+                </div>
+                <div class="d-flex justify-content-end mt-3">
+                    {% if  client.eqptport_id %}
+                        <a class="btn btn-info btn-sm"
+                           href="{{ url_for('eqpt_bp.port_search_by_id', port_id=client.eqptport_id ) }}">
+                            Показать
+                        </a>
+                        <a class="btn btn-primary btn-sm ml-3"
+                           href="{{ url_for('.client_relation_eqpt_building', client_id=client.id, building_id=building.id) }}">
+                            Изменить
+                        </a>
+                        <a class="btn btn-danger btn-sm ml-3"
+                           href="{{ url_for('.client_relation_delete', client_id=client.id) }}">
+                            Отключить
+                        </a>
+                    {% else %}
+                        <a class="btn btn-primary btn-sm"
+                           href="{{ url_for('.client_relation_eqpt_building', client_id=client.id, building_id=building.id) }}">
+                            Подключить
+                        </a>
+                    {% endif %}
+                </div>
+            </div>
+
+        </div>
+        <div class="col-lg-4">
+            <!-- Eqpt-->
+            <div class="card-box">
+                <h5 class="header-title mt-0"><i class="fas fa-archive"></i> История:</h5>
+                <div class="panel-body">
+                    <hr>
+                </div>
+                <div class="d-flex justify-content-end mt-3">
+                    <a class="btn btn-primary btn-sm" href="{{ url_for('.client_log', client_id=client.id) }}">
+                        Услуги
+                    </a>
+                    <a class="btn btn-primary btn-sm ml-3" href="#">
+                        Авторизация
+                    </a>
+                    <a class="btn btn-primary btn-sm ml-3" href="#">
+                        Трафик
+                    </a>
+
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+{% endblock %}
+
+{% block headerStyle %}
+    {{ super() }}
+    <link rel="stylesheet" href="{{ url_for('static', filename='vendor/select2/css/select2.min.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='vendor/select2/css/select2-bootstrap.min.css') }}">
+{% endblock %}
+
+{% block footerJS %}
+    {{ super() }}
+
+    <script src="{{ url_for('static', filename='vendor/select2/js/select2.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='vendor/select2/js/i18n/ru.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/search-place.js') }}"></script>
+    <script src="{{ url_for('static', filename='vendor/moment-with-locales.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='vendor/jquery.inputmask.min.js') }}"></script>
+
+    <script>
+        moment.locale("ru");
+
+        function flask_moment_render(elem) {
+            $(elem).text(eval('moment("' + $(elem).data('timestamp') + '").' + $(elem).data('format') + ';'));
+            $(elem).removeClass('flask-moment').show();
+        }
+
+        function flask_moment_render_all() {
+            $('.flask-moment').each(function () {
+                flask_moment_render(this);
+                if ($(this).data('refresh')) {
+                    (function (elem, interval) {
+                        setInterval(function () {
+                            flask_moment_render(elem)
+                        }, interval);
+                    })(this, $(this).data('refresh'));
+                }
+            })
+        }
+
+        $(document).ready(function () {
+            flask_moment_render_all();
+        });
+
+        $('#building').change(function () {
+            let building_id = $('#building').val();
+            if (building_id) {
+                $('#building_id').val(building_id);
+            }
+        });
+
+        $('#phone').inputmask('(999) 999-9999');
+    </script>
+{% endblock %}

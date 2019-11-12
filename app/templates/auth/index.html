@@ -1,0 +1,122 @@
+{% from "macros.html" import modal_delete with context %}
+{% extends "layout.html" %}
+
+{% block title %}Список сетей{% endblock %}
+
+{% block content %}
+
+    <div class="row">
+
+        <div class="col-xl-12">
+            <div class="card-box">
+                <div class="row mb-3">
+                    <div class="col-sm-9">
+                        <h4 class="header-title mb-3 ">
+                            Список пользователей:
+                        </h4>
+                    </div>
+                    <div class="col-sm-3 float-right">
+                        <a class="btn btn-success float-right" href="{{ url_for('.register') }}">Добавить</a>
+                    </div>
+                </div>
+
+                <div class="table-responsive table-format table-striped">
+                    <table class="table">
+                        <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Имя</th>
+                            <th>Логин</th>
+                            <th>Роль</th>
+                            <th>Статус</th>
+                            <th>Активность</th>
+                            <th>Операции</th>
+                        </tr>
+                        </thead>
+                        {% for user in users %}
+                            <tr>
+                                <td>{{ user.id }}</td>
+                                <td>{{ user.name }}</td>
+                                <td>{{ user.username }}</td>
+                                <td>
+                                    {% if user.is_admin %}
+                                        <span class="badge badge-warning p-2 badge-resetfont">Администратор</span>
+                                    {% else %}
+                                        <span class="badge badge-primary p-2 badge-resetfont">Пользователь</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if user.is_active %}
+                                        <span class="badge badge-success p-2 badge-resetfont">Активный</span>
+                                    {% else %}
+                                        <span class="badge badge-danger p-2 badge-resetfont">Отключен</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {{ moment(user.last_seen).calendar() }}
+                                </td>
+                                <td>
+                                    <div class="dropdown">
+                                        <button class="btn btn-sm btn-primary dropdown-toggle" type="button"
+                                                id="dropdownMenuButton{{ user.id }}" data-toggle="dropdown"
+                                                aria-haspopup="true" aria-expanded="false">
+                                            Операции
+                                        </button>
+                                        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton{{ user.id }}">
+                                            <a class="dropdown-item" href="{{ url_for('.user_edit',id=user.id) }}">Изменить</a>
+                                            <a class="dropdown-item" href="{{ url_for('.user_password',id=user.id) }}">Сменить пароль</a>
+                                            {% if user.username != 'admin' %}
+                                                <div class="dropdown-divider"></div>
+                                                <a class="dropdown-item"
+                                                   data-href="{{ url_for('.user_delete',id=user.id) }}"
+                                                   data-toggle="modal"
+                                                   data-target="#modalDelete">
+                                                    Удалить
+                                                </a>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {{ modal_delete('Удаление пользователя') }}
+
+{% endblock %}
+
+{% block footerJS %}
+    {{ super() }}
+
+    <script src="{{ url_for('static', filename='vendor/moment-with-locales.min.js') }}"></script>
+    <script>
+        moment.locale("ru");
+
+        function flask_moment_render(elem) {
+            $(elem).text(eval('moment("' + $(elem).data('timestamp') + '").' + $(elem).data('format') + ';'));
+            $(elem).removeClass('flask-moment').show();
+        }
+
+        function flask_moment_render_all() {
+            $('.flask-moment').each(function () {
+                flask_moment_render(this);
+                if ($(this).data('refresh')) {
+                    (function (elem, interval) {
+                        setInterval(function () {
+                            flask_moment_render(elem)
+                        }, interval);
+                    })(this, $(this).data('refresh'));
+                }
+            })
+        }
+
+        $(document).ready(function () {
+            flask_moment_render_all();
+        });
+    </script>
+
+{% endblock %}

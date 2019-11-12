@@ -1,0 +1,69 @@
+{% extends "layout.html" %}
+
+{% block title %}Список сетей{% endblock %}
+
+{% block content %}
+
+    <div class="row">
+
+        <div class="col-xl-12">
+            <div class="card-box">
+                <div class="row mb-3">
+                    <div class="col-sm-9">
+                        <h4 class="header-title mb-3 ">
+                            Подсеть:
+                            <small class="text-muted">
+                                {{ network.name }}
+                            </small>
+                        </h4>
+                    </div>
+                    <div class="col-sm-3 float-right">
+                        <a class="btn btn-success float-right" href="{{ url_for('.show_lan') }}">Назад</a>
+                    </div>
+                </div>
+
+
+                <div class="row">
+                    <div class="col-sm-4 offset-sm-4">
+                        <canvas id="doughnut-chart" width="200px" height="200px"></canvas>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
+
+{% block headerStyle %}
+    {{ super() }}
+    <link rel="stylesheet" href="{{ url_for('static', filename='vendor/chart/Chart.min.css') }}">
+{% endblock %}
+
+{% block footerJS %}
+    {{ super() }}
+
+    <script src="{{ url_for('static', filename='vendor/chart/Chart.bundle.min.js') }}"></script>
+    <script>
+
+        new Chart(document.getElementById("doughnut-chart"), {
+            type: 'doughnut',
+            data: {
+                labels: ["Использовано " + {{ host_count - host_free }}, "Свободно" +{{ host_free }}],
+                datasets: [
+                    {
+                        label: "Подсеть {{ network.name }}",
+                        backgroundColor: ["#CC0000", "#00CC33"],
+                        data: [{{ host_count - host_free }}, {{ host_free }}]
+                    }
+                ]
+            },
+            options: {
+                title: {
+                    display: true,
+                    text: 'Использование ip адресов'
+                }
+            }
+        });
+    </script>
+{% endblock %}

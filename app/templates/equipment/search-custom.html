@@ -1,0 +1,108 @@
+{% extends "layout.html" %}
+
+{% block title %}Поиск - Клиенты{% endblock %}
+
+{% block content %}
+
+    <div class="card my-3">
+        <div class="card-body">
+            <h2 class="text-center my-3">Поиск оборудование</h2>
+
+            <div class="search-form col-8 offset-2 my-2">
+                <form action="" method="get">
+                    <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                            <select class="custom-select" id="search_param" name="p">
+                                <option value="name" selected>Имя узла</option>
+                                <option value="ip">IP</option>
+                                <option value="mac">MAC</option>
+                                <option value="serial">Серийный номер</option>
+                            </select>
+                        </div>
+                        <input class="form-control" id="search_query" name="q" type="text">
+                        <div class="input-group-append">
+                            <button class="btn btn-primary" type="submit">
+                                <i class="fas fa-search"></i> Поиск
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            {% if eqpts %}
+                <div class="table-responsive table-format table-striped mt-5">
+                    <h5 class="mb-3">{{ title }}</h5>
+                    <table class="table">
+                        <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Имя узла</th>
+                            <th>IP адрес</th>
+                            <th>Модель</th>
+                            <th>MAC</th>
+                            <th>Серийный номер</th>
+                            <th>Порты</th>
+                        </tr>
+                        </thead>
+                        {% for eqpt in eqpts %}
+                            <tr>
+                                <td>{{ eqpt.id }}</td>
+                                <td>{{ eqpt.name }}</td>
+                                <td>{{ eqpt.ipv4 }}</td>
+                                <td>{{ eqpt.eqptmodel.name }}</td>
+                                <td>{{ eqpt.mac }}</td>
+                                <td>{{ eqpt.serial }}</td>
+                                <td>
+                                    <a href="{{ url_for('.port_search_by_eqpt', eqpt_id=eqpt.id) }}" class="btn btn-sm btn-info">
+                                        Показать
+                                    </a>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </table>
+                </div>
+            {% else %}
+                <div class="alert alert-primary text-center" role="alert">
+                    Нет данных
+                </div>
+            {% endif %}
+
+        </div>
+    </div>
+
+{% endblock %}
+
+{% block headerStyle %}
+    {{ super() }}
+{% endblock %}
+
+{% block footerJS %}
+    {{ super() }}
+    <script src="{{ url_for('static', filename='vendor/jquery.inputmask.min.js') }}"></script>
+
+    <script>
+        $('#search_param').change(function () {
+            let valueSelected = $(this).val();
+            let searchEl = $('#search_query');
+
+            switch (valueSelected) {
+                case 'phone':
+                    searchEl.inputmask('(999) 999-9999');
+                    break;
+                case 'ip':
+                    searchEl.inputmask('ip');
+                    break;
+                case 'mac':
+                    searchEl.inputmask('mac', {
+                        casing: 'lower'
+                    });
+                    break;
+                default:
+                    if (searchEl.inputmask) {
+                        searchEl.inputmask('remove');
+                    };
+            }
+        });
+
+    </script>
+{% endblock %}

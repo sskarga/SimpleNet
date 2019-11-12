@@ -1,0 +1,151 @@
+{% extends "layout.html" %}
+
+{% block title %}Подключение клиента к оборудованию{% endblock %}
+
+{% block content %}
+
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="card-box">
+                <div class="row">
+                    <div class="col-sm-8">
+                        <h2>Клиент #{{ client.id }}: {{ client.fio }}</h2>
+                    </div>
+                    <div class="col-sm-4">
+                        <a class="btn btn-success float-right"
+                           href="{{ url_for('.client_details',client_id=client.id ) }}">Вернуться</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="row">
+
+        <div class="col-xl-12">
+            <div class="card-box">
+                <div class="row mb-3">
+                    <div class="col-sm-9">
+                        <h4 class="header-title mb-3 ">
+                            Оборудование:
+                            <small class="text-muted">
+                                {{ building.street.city.name }},
+                                {{ building.street.name }},
+                                {{ building.name }}
+                            </small>
+                        </h4>
+                    </div>
+                    <div class="col-sm-3 float-right">
+                        <button class="btn btn-primary float-right mx-2" data-toggle="modal"
+                                data-target="#modalAddressForm">
+                            Поиск
+                        </button>
+
+                        <!-- Modal -->
+                        <div class="modal fade" id="modalAddressForm" tabindex="-1" role="dialog"
+                             aria-labelledby="modalAddressForm" aria-hidden="true">
+                            <div class="modal-dialog modal-dialog-centered" role="document">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title">Поиск оборудование</h5>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                    </div>
+                                    <form>
+                                        <div class="modal-body">
+
+                                            <div class="form-group">
+                                                <select name="city" id="city" class="custom-select">
+                                                </select>
+                                            </div>
+                                            <div class="form-group">
+                                                <select name="street" id="street" class="custom-select">
+                                                    <option value="">Выберите улицу/район</option>
+                                                </select>
+                                            </div>
+                                            <div class="form-group">
+                                                <select name="building" id="building" class="custom-select">
+                                                    <option value="">Выберите сооружение</option>
+                                                </select>
+                                            </div>
+
+                                        </div>
+                                        <div class="modal-footer">
+                                            <a id="searchBuilding" class="btn btn-primary disabled" href="">
+                                                Поиск
+                                            </a>
+                                            <button type="button" class="btn btn-secondary" data-dismiss="modal">
+                                                Закрыть
+                                            </button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- End modal -->
+
+                    </div>
+                </div>
+
+                <div class="table-responsive table-format table-striped">
+                    <table class="table">
+                        <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Имя</th>
+                            <th>IP адрес</th>
+                            <th>Модель</th>
+                            <th>MAC</th>
+                            <th>Порты</th>
+                        </tr>
+                        </thead>
+                        {% for eqpt in eqpts %}
+                            <tr>
+                                <td>{{ eqpt.id }}</td>
+                                <td>{{ eqpt.name }}</td>
+                                <td>{{ eqpt.ipv4 }}</td>
+                                <td>{{ eqpt.eqptmodel.name }}</td>
+                                <td>{{ eqpt.mac }}</td>
+                                <td><a href="{{ url_for('.client_relation_eqpt_ports', client_id=client.id, eqpt_id=eqpt.id) }}"
+                                       class="btn btn-sm btn-info">Выбрать</a>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
+
+{% block headerStyle %}
+    {{ super() }}
+    <link rel="stylesheet" href="{{ url_for('static', filename='vendor/select2/css/select2.min.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='vendor/select2/css/select2-bootstrap.min.css') }}">
+{% endblock %}
+
+{% block footerJS %}
+    {{ super() }}
+
+    <script src="{{ url_for('static', filename='vendor/select2/js/select2.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='vendor/select2/js/i18n/ru.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/search-place.js') }}"></script>
+    <script>
+
+        $('#building').change(function () {
+            let building_id = $('#building').val();
+            if ((building_id) && (building_id > 0)){
+                let baseurl = window.location.pathname.split("/").slice(1,-1).join("/");
+                $('#searchBuilding').attr("href", "/"+baseurl+"/"+building_id);
+                $('#searchBuilding').removeClass("disabled");
+            }
+            else {
+                $('#searchBuilding').attr("href", "#");
+                $('#searchBuilding').addClass(" disabled");
+            }
+        });
+    </script>
+{% endblock %}

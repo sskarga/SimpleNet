@@ -1,0 +1,112 @@
+{% extends "layout.html" %}
+
+{% block title %}Логи{% endblock %}
+
+{% block content %}
+
+    <div class="row">
+
+        <div class="col-xl-12">
+            <div class="card-box">
+                <div class="row mb-3">
+                    <div class="col-sm-9">
+                        <h4 class="header-title mb-3 ">
+                            Логи услуг
+                        </h4>
+                    </div>
+                    <div class="col-sm-3 float-right">
+                        <a class="btn btn-warning float-right"
+                           href="{{ url_for('client_bp.client_details', client_id=client_id) }}">Вернуться к клиенту</a>
+                    </div>
+                </div>
+
+                {% if logs %}
+                    <div class="table-responsive table-format table-striped">
+                        <table class="table">
+                            <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Дата и время события</th>
+                                <th>Тип</th>
+                                <th>Событие</th>
+                                <th>Создано</th>
+                            </tr>
+                            </thead>
+                            {% for log in logs %}
+                                <tr>
+                                    <td>{{ log.id }}</td>
+                                    <td>
+                                        <span class="badge badge-secondary p-2 badge-resetfont">
+                                            {{ moment(log.create_at).calendar() }}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        {% if log.type == 'i' %}
+                                            <span class="badge badge-primary p-2 badge-resetfont">
+                                                Инфо
+                                            </span>
+                                        {% elif log.type == 'w' %}
+                                            <span class="badge badge-warning p-2 badge-resetfont">
+                                                Предуп.
+                                            </span>
+                                        {% else %}
+                                            {{ log.type }}
+                                        {% endif %}
+                                    </td>
+                                    <td>{{ log.event }}</td>
+                                    <td>
+                                        <span class="badge badge-info p-2 badge-resetfont">
+                                        {% if log.initiator_id  == 0 %}
+                                            Система
+                                        {% else %}
+                                            {{ log.username }}
+                                        {% endif %}
+                                        </span>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </table>
+                    </div>
+                {% else %}
+                    <div class="alert alert-primary" role="alert">
+                        Нет записей
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+
+    </div>
+
+{% endblock %}
+
+{% block footerJS %}
+    {{ super() }}
+
+    <script src="{{ url_for('static', filename='vendor/moment-with-locales.min.js') }}"></script>
+    <script>
+        moment.locale("ru");
+
+        function flask_moment_render(elem) {
+            $(elem).text(eval('moment("' + $(elem).data('timestamp') + '").' + $(elem).data('format') + ';'));
+            $(elem).removeClass('flask-moment').show();
+        }
+
+        function flask_moment_render_all() {
+            $('.flask-moment').each(function () {
+                flask_moment_render(this);
+                if ($(this).data('refresh')) {
+                    (function (elem, interval) {
+                        setInterval(function () {
+                            flask_moment_render(elem)
+                        }, interval);
+                    })(this, $(this).data('refresh'));
+                }
+            })
+        }
+
+        $(document).ready(function () {
+            flask_moment_render_all();
+        });
+    </script>
+
+{% endblock %}

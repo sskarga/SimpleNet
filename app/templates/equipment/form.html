@@ -1,0 +1,37 @@
+{% from "macros.html" import make_form with context %}
+{% extends "layout.html" %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div class="card-header">
+    <h4>{{ title }}</h4>
+  </div>
+    <div class="card-body">
+
+<form action="" method="post">
+    {{ make_form(form, style='rows', btn_submit=True) }}
+</form>
+
+</div>
+</div>
+{% endblock %}
+
+{% block footerJS %}
+{{ super() }}
+
+<script src="{{ url_for('static', filename='vendor/jquery.inputmask.min.js') }}"></script>
+<script>
+    $('#ipv4').inputmask('ip');
+    $('#mac').inputmask('mac', {
+        casing: 'lower'
+    });
+    $('#cvlan').inputmask("integer", {
+        min: '1',
+        max: "3999",
+        rightAlign: false
+    })
+</script>
+
+{% endblock %}

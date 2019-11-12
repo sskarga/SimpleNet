@@ -1,0 +1,117 @@
+{% from "macros.html" import modal_delete with context %}
+{% extends "layout.html" %}
+
+{% block title %}Клиенты{% endblock %}
+
+{% block content %}
+
+    <div class="row">
+
+        <div class="col-xl-12">
+            <div class="card-box">
+                <div class="row">
+                    <div class="col-sm-9">
+                        <h4 class="header-title mb-3 ">
+                            Оборудование: {{ eqpt.name }}
+                            <small class="text-muted">mac: {{ eqpt.mac }}</small>
+                        </h4>
+                    </div>
+                    <div class="col-sm-3 float-right">
+                        <a class="btn btn-warning float-right mx-2"
+                           href="{{ url_for('.eqpt_search_by_building', building_id=eqpt.building_id) }}">
+                            <i class="fas fa-undo"></i> Назад
+                        </a>
+                        <a class="btn btn-success float-right" href="{{ url_for('.port_create', eqpt_id=eqpt.id) }}">
+                            <i class="fas fa-plus"></i> Добавить
+                        </a>
+                    </div>
+                </div>
+
+                <div class="row px-3">
+                    <div class="col-12 bd-callout bd-callout-warning">
+                        <h5>Примечание:
+                        <a class="btn btn-light float-right" href="{{ url_for(".eqpt_note", id=eqpt.id) }}"><i
+                                class="fas fa-marker"></i></a>
+                        </h5>
+                        {% if eqpt.note %}
+                            <p>{{ eqpt.note }}</p>
+                        {% else %}
+                            <p>Нет заметок</p>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="table-responsive table-format table-striped">
+                    <table class="table">
+                        <thead>
+                        <tr>
+                            <th style="width: auto;">№ порта</th>
+                            <th>Клиент/статус</th>
+                            <th>C-Vlan</th>
+                            <th>IP</th>
+                            <th>Rad-User</th>
+                            <th>Rad-Pas</th>
+                            <th>Операции</th>
+                        </tr>
+                        </thead>
+                        {% if ports %}
+                            {% for p in ports %}
+                                {% if (search_id == p.id) %}
+                                    <tr class="active">
+                                        {% else %}
+                                    <tr>
+                                {% endif %}
+                            <td>
+                                <button type="button"
+                                        class="btn btn-sm btn-secondary btn-number_port">{{ p.port }}</button>
+                            </td>
+                            <td>
+                                {% if p.status < 0 %}
+                                    <button type="button" class="btn btn-sm btn-danger">Неисправен</button>
+
+                                {% else %}
+                                    {% if p.client_on.id %}
+                                        <a href="{{ url_for('client_bp.client_details', client_id=p.client_on.id) }}"
+                                           class="btn btn-sm btn-info">{{ p.client_on.apartment }}</a>
+                                    {% else %}
+                                        <button type="button" class="btn btn-sm btn-light">Нет</button>
+                                    {% endif %}
+                                {% endif %}
+
+                            </td>
+                            <td>{{ p.cvlan }}</td>
+                            <td>{{ p.ip.host_ipv4 }}</td>
+                            <td>{{ p.radius_user }}</td>
+                            <td>{{ p.radius_pass }}</td>
+                            <td>
+                                <div class="dropdown">
+                                    <button class="btn btn-sm btn-primary dropdown-toggle" type="button"
+                                            id="dropdownMenuButton{{ p.id }}" data-toggle="dropdown"
+                                            aria-haspopup="true" aria-expanded="false">
+                                        Операции
+                                    </button>
+                                    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton{{ p.id }}">
+                                        <a class="dropdown-item"
+                                           href="{{ url_for('.port_edit', id=p.id) }}">Изменить</a>
+                                        <div class="dropdown-divider"></div>
+                                        <a class="dropdown-item"
+                                           data-href="{{ url_for('.port_delete', id=p.id) }}"
+                                           data-toggle="modal"
+                                           data-target="#modalDelete">
+                                            Удалить
+                                        </a>
+                                    </div>
+                                </div>
+                            </td>
+                            </tr>
+                            {% endfor %}
+                        {% endif %}
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {{ modal_delete('Удаление порта') }}
+
+{% endblock %}

@@ -1,0 +1,120 @@
+{% extends "layout.html" %}
+
+{% block title %}Поиск - Клиенты{% endblock %}
+
+{% block content %}
+
+    <div class="card my-3">
+        <div class="card-body">
+            <h2 class="text-center my-3">Поиск клиента</h2>
+
+            <div class="search-form col-6 offset-3 my-2">
+                <form action="" method="get">
+                    <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                            <select class="custom-select" id="search_param" name="p">
+                                <option value="fio" selected>Фамилия</option>
+                                <option value="phone">Телефон</option>
+                                <option value="ip">IP</option>
+                            </select>
+                        </div>
+                        <input class="form-control" id="search_query" name="q" type="text">
+                        <div class="input-group-append">
+                            <button class="btn btn-primary" type="submit">
+                                <i class="fas fa-search"></i> Поиск
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            {% if clients %}
+                <div class="table-responsive table-format table-striped mt-5">
+                    <h5 class="mb-3">{{ title }}</h5>
+                    <table class="table">
+                        <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Фамилия И. О.</th>
+                            <th>Телефон</th>
+                            <th>Подключен</th>
+                            <th>Дата подключения</th>
+                            <th>Дата отключения</th>
+                            <th>Детали</th>
+                        </tr>
+                        </thead>
+                        {% for cln in clients %}
+                            <tr>
+                                <td>{{ cln.id }}</td>
+                                <td>{{ cln.fio }}</td>
+                                <td>{{ cln.phone }}</td>
+                                <td>
+                                    {% if cln.eqptport_id %}
+                                        <span class="badge badge-success">Подключен</span>
+                                    {% else %}
+                                        <span class="badge badge-secondary">Отключен</span>
+                                    {% endif %}
+                                </td>
+                                <td>{{ cln.create_at }}</td>
+                                <td>
+                                    {% if cln.suspension_at %}
+                                        {{ cln.suspension_at }}
+                                    {% else %}
+                                        -
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <a class="btn btn-primary btn-sm float-right"
+                                       href="{{ url_for('.client_details',client_id=cln.id) }}">
+                                        <i class="fas fa-eye"></i> Показать
+                                    </a>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </table>
+                </div>
+            {% else %}
+                <div class="alert alert-primary text-center" role="alert">
+                    Нет данных
+                </div>
+            {% endif %}
+
+        </div>
+    </div>
+
+{% endblock %}
+
+{% block headerStyle %}
+    {{ super() }}
+{% endblock %}
+
+{% block footerJS %}
+    {{ super() }}
+    <script src="{{ url_for('static', filename='vendor/jquery.inputmask.min.js') }}"></script>
+
+    <script>
+        $('#search_param').change(function () {
+            let valueSelected = $(this).val();
+            let searchEl = $('#search_query');
+
+            switch (valueSelected) {
+                case 'phone':
+                    searchEl.inputmask('(999) 999-9999');
+                    break;
+                case 'ip':
+                    searchEl.inputmask('ip');
+                    break;
+                case 'mac':
+                    searchEl.inputmask('mac', {
+                        casing: 'lower'
+                    });
+                    break;
+                default:
+                    if (searchEl.inputmask) {
+                        searchEl.inputmask('remove');
+                    };
+            }
+        });
+
+    </script>
+{% endblock %}

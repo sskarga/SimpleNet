@@ -1,0 +1,80 @@
+{% from "macros.html" import modal_delete with context %}
+{% extends "layout.html" %}
+
+{% block title %}Оборудование - порты{% endblock %}
+
+{% block content %}
+
+    <div class="row">
+
+        <div class="col-xl-12">
+            <div class="card-box">
+                <div class="row mb-3">
+                    <div class="col-sm-9">
+                        <h4 class="header-title mb-3 ">
+                            Оборудование:
+                            <small class="text-muted">
+                                {{ building.street.city.name }},
+                                {{ building.street.name }},
+                                {{ building.name }}
+                            </small>
+                        </h4>
+                    </div>
+                    <div class="col-sm-3 float-right">
+                        <a class="btn btn-success float-right" href="{{ url_for('.eqpt_create', building_id=building.id) }}">Добавить</a>
+                        <a class="btn btn-primary float-right mx-2" href="{{ url_for('eqpt_bp.eqpt_search_form') }}">Поиск</a>
+                    </div>
+                </div>
+
+                <div class="table-responsive table-format table-striped">
+                    <table class="table">
+                        <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Имя</th>
+                            <th>IP адрес</th>
+                            <th>Модель</th>
+                            <th>MAC</th>
+                            <th>Порты</th>
+                            <th>Операции</th>
+                        </tr>
+                        </thead>
+                        {% for eqpt in eqpts %}
+                            <tr>
+                                <td>{{ eqpt.id }}</td>
+                                <td>{{ eqpt.name }}</td>
+                                <td>{{ eqpt.ipv4 }}</td>
+                                <td>{{ eqpt.eqptmodel.name }}</td>
+                                <td>{{ eqpt.mac }}</td>
+                                <td><a href="{{ url_for('.port_search_by_eqpt', eqpt_id=eqpt.id) }}"
+                                       class="btn btn-sm btn-info">Показать</a></td>
+                                <td>
+                                    <div class="dropdown">
+                                        <button class="btn btn-sm btn-primary dropdown-toggle" type="button"
+                                                id="dropdownMenuButton{{ eqpt.id }}" data-toggle="dropdown"
+                                                aria-haspopup="true" aria-expanded="false">
+                                            Операции
+                                        </button>
+                                        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton{{ eqpt.id }}">
+                                            <a class="dropdown-item" href="{{ url_for('.eqpt_edit', id=eqpt.id) }}">Изменить</a>
+                                            <div class="dropdown-divider"></div>
+                                            <a class="dropdown-item"
+                                               data-href="{{ url_for('.eqpt_delete', id=eqpt.id) }}"
+                                               data-toggle="modal"
+                                               data-target="#modalDelete">
+                                                Удалить
+                                            </a>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {{ modal_delete('Удаление оборудования') }}
+
+{% endblock %}

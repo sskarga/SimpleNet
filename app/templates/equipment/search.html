@@ -1,0 +1,58 @@
+{% extends "layout.html" %}
+
+{% block title %}Клиенты{% endblock %}
+
+{% block content %}
+
+    <div class="card My-3">
+        <div class="card-header">
+            <h4>Поиск</h4>
+        </div>
+        <div class="card-body">
+            <div class="form-row">
+                <div class="col mb-3">
+                    <select name="city" id="city" class="custom-select">
+                    </select>
+                </div>
+                <div class="col mb-3">
+                    <select name="street" id="street" class="custom-select">
+                        <option>Выберите улицу/район</option>
+                    </select>
+                </div>
+                <div class="col mb-3">
+                    <select name="building" id="building" class="custom-select">
+                        <option>Выберите сооружение</option>
+                    </select>
+                </div>
+                <div class="colmb-3">
+                    <button class="search-building btn btn-primary disabled" id="searchEqptByID" role="button">
+                        Найти оборудование
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
+
+{% block headerStyle %}
+    {{ super() }}
+    <link rel="stylesheet" href="{{ url_for('static', filename='vendor/select2/css/select2.min.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='vendor/select2/css/select2-bootstrap.min.css') }}">
+{% endblock %}
+
+{% block footerJS %}
+    {{ super() }}
+
+    <script src="{{ url_for('static', filename='vendor/select2/js/select2.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='vendor/select2/js/i18n/ru.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/search-place.js') }}"></script>
+    <script>
+        $('#searchEqptByID').click(function () {
+            let building_id = $('#building').val();
+            if ((building_id) && (building_id > 0)) {
+                document.location.href = '/equipment/building/' + building_id;
+            }
+        });
+    </script>
+{% endblock %}

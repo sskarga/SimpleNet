@@ -1,0 +1,190 @@
+* {
+  box-sizing: border-box;
+}
+
+body{
+    background-color: #f3f6f8;
+}
+
+.breadcrumb {
+    background-color: #fff;
+}
+
+.footer {
+  /*position: absolute;
+  bottom: 0;*/
+  width: 100%;
+  background-color: #fff;
+}
+
+/*
+*
+* ==========================================
+* Select 2
+* ==========================================
+*
+*/
+
+.select2-container--bootstrap .select2-selection--single {
+  height: 38px;
+  line-height: 1.5;
+}
+
+/*
+*
+* ==========================================
+* Menu
+* ==========================================
+*
+*/
+.dropdown-submenu {
+  position: relative;
+}
+
+.dropdown-submenu>a:after {
+   content: "";
+    margin-top: 0.5em;
+   float: right;
+}
+
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: 0px;
+  margin-left: 0px;
+}
+
+/*
+*
+* ==========================================
+* Table
+* ==========================================
+*
+*/
+
+table {
+  font-size: 14px;
+}
+
+.table-format {
+    min-height: 300px;
+}
+
+.table-format tr th:first-child {
+  width: 60px;
+  text-align: center;
+  vertical-align: middle;
+}
+.table-format tr th:last-child {
+  width: 200px;
+  text-align: center;
+  vertical-align: middle;
+}
+
+.table-format tr td:first-child,
+.table-format tr td:last-child {
+  text-align: center;
+  vertical-align: middle;
+}
+
+.text-center_middle {
+  text-align: center;
+  vertical-align: middle;
+}
+
+.table-format tr td {
+    vertical-align: middle;
+}
+
+table.table tr.active {
+    background-color: #e9ff0066;
+    border-bottom: solid 3px red;
+    border-top: solid 3px red;
+}
+
+a.table_link {
+  font-weight: bold;
+  color: #566787;
+  display: inline-block;
+  text-decoration: none;
+  outline: none !important;
+}
+
+.btn-number_port{
+    min-width: 40px;
+}
+
+
+.badge-resetfont {
+    font-size: 14px;
+    font-weight: 400;
+}
+
+/*
+*
+* ==========================================
+* card-box
+* ==========================================
+*
+*/
+
+.card-box {
+    padding: 20px;
+    border-radius: 3px;
+    margin-bottom: 30px;
+    background-color: #fff;
+}
+
+.ribbon-box .ribbon-primary {
+    background: #2d7bf4;
+}
+
+.ribbon-box .ribbon {
+    position: relative;
+    float: left;
+    clear: both;
+    padding: 5px 12px 5px 12px;
+    margin-left: -30px;
+    margin-bottom: 15px;
+    font-family: Rubik,sans-serif;
+    -webkit-box-shadow: 2px 5px 10px rgba(49,58,70,.15);
+    -o-box-shadow: 2px 5px 10px rgba(49,58,70,.15);
+    box-shadow: 2px 5px 10px rgba(49,58,70,.15);
+    color: #fff;
+    font-size: 13px;
+}
+
+/*
+*
+* ==========================================
+* bd-callout
+* ==========================================
+*
+*/
+.bd-callout {
+    padding: 1.25rem;
+    margin-top: 1.25rem;
+    margin-bottom: 1.25rem;
+    border: 1px solid #eee;
+    border-left-width: .25rem;
+    border-radius: .25rem;
+}
+.bd-callout p:last-child {
+    margin-bottom: 0;
+}
+
+.bd-callout+.bd-callout {
+    margin-top: -.25rem;
+}
+
+.bd-callout-info {
+    border-left-color: #5bc0de !important;
+}
+
+.bd-callout-warning {
+    border-left-color: #f0ad4e !important;
+}
+
+.bd-callout-danger {
+    border-left-color: #d9534f !important;
+}

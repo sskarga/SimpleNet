@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <link rel="shortcut icon" href="{{ url_for('static', filename='img/favicon.ico') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='vendor/bootstrap4/bootstrap.min.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/login.css') }}">
+
+    <title>Авторизация</title>
+</head>
+<body>
+<div class="container-fluid">
+    <div class="row no-gutter">
+        <!-- The image half -->
+        <div class="col-md-6 d-none d-md-flex bg-image"></div>
+
+
+        <!-- The content half -->
+        <div class="col-md-6 bg-light">
+            <div class="login d-flex align-items-center py-5">
+
+                <!-- Demo content-->
+                <div class="container">
+                    <div class="row">
+                        <div class="col-lg-10 col-xl-7 mx-auto">
+                            <h3 class="display-4">Авторизация</h3>
+                            <p class="text-muted mb-4">Для начало работы в системе введите логин и пароль.</p>
+                            <form action="" method="post">
+                                {{ form.hidden_tag() }}
+
+                                {% with messages = get_flashed_messages() %}
+                                    {% if messages %}
+                                        {% for message in messages %}
+                                            <div class="alert alert-danger alert-dismissible fade show"
+                                                 role="alert">
+                                                {{ message }}
+                                            </div>
+                                        {% endfor %}
+                                    {% endif %}
+                                {% endwith %}
+
+                                <div class="form-group mb-3">
+                                    {% if form.username.errors %}
+                                        {{ form.username(class="form-control rounded-pill border-0 shadow-sm px-4 is-invalid", placeholder="Логин") }}
+                                        <div class="invalid-feedback">
+                                            {% for error in form.username.errors %}
+                                                {{ error }},
+                                            {% endfor %}
+                                        </div>
+                                    {% else %}
+                                        {{ form.username(class="form-control rounded-pill border-0 shadow-sm px-4", placeholder="Логин") }}
+                                    {% endif %}
+                                </div>
+                                <div class="form-group mb-3">
+                                    {% if form.password.errors %}
+                                        {{ form.password(class="form-control rounded-pill border-0 shadow-sm px-4 is-invalid", placeholder="Пароль") }}
+                                        <div class="invalid-feedback">
+                                            {% for error in form.password.errors %}
+                                                {{ error }},
+                                            {% endfor %}
+                                        </div>
+                                    {% else %}
+                                        {{ form.password(class="form-control rounded-pill border-0 shadow-sm px-4", placeholder="Пароль") }}
+                                    {% endif %}
+                                </div>
+                                <div class="custom-control custom-checkbox mb-3">
+                                    {{ form.remember_me(class="custom-control-input") }}
+                                    {{ form.remember_me.label(class="custom-control-label") }}
+                                </div>
+                                {{ form.submit(class="btn btn-primary btn-block text-uppercase mb-2 rounded-pill shadow-sm") }}
+
+                                <div class="d-flex justify-content-between mt-4">
+                                    <p>
+                                        SimpleNet - simple network management programm. <br/>
+                                        Copyright (C) 2019 Sergey Skarga. All rights reserved.
+                                    </p>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div><!-- End -->
+
+            </div>
+        </div><!-- End -->
+
+    </div>
+</div>
+</body>
+</html>
