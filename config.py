@@ -1,7 +1,9 @@
 """App configuration."""
 from os import environ, path
+from dotenv import load_dotenv
 
 basedir = path.abspath(path.dirname(__file__))
+load_dotenv(path.join(basedir, '.env'))
 
 
 class Config:
@@ -18,13 +20,13 @@ class Config:
     WTF_CSRF_SECRET_KEY = environ.get('WTF_CSRF_SECRET_KEY')
 
     # SQL ALCHEMY
-    SQLALCHEMY_DATABASE_URI = environ.get('SQLALCHEMY_DATABASE_URI') or \
+    SQLALCHEMY_DATABASE_URI = environ.get('DATABASE_URI') or \
         'sqlite:///' + path.join(basedir, 'app.db')
 
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     BOOTSTRAP_SERVE_LOCAL = True
 
-    PAGINATE_PAGE = int(environ.get('PAGINATE_PAGE', 25))
+    PAGINATE_PAGE = 25
 
     # Static Assets
     # STATIC_FOLDER = environ.get('STATIC_FOLDER')

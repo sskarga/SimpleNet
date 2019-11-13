@@ -16,7 +16,7 @@
     </div>
 {%- endmacro %}
 
-{% macro make_form(form, style='groups', btn_submit=None) -%}
+{% macro make_form(form, style='groups', btn_back=True) -%}
     {{ form.hidden_tag() }}
 
     {% for field in form if field.widget.input_type != 'hidden' %}
@@ -76,11 +76,16 @@
 
         {% else %}
 
-            {% if (style == 'rows') and btn_submit %}
+            {% if style == 'rows' %}
                 <div class="form-group row">
                     <div class="col-sm-10 offset-sm-2">
-                        <input class="btn btn-success" id="submit" name="submit" type="submit" value="Сохранить">
-                        <button type="button" class="btn btn-warning" onclick="window.history.back();">Назад</button>
+                        {{ field(class="btn btn-success") }}
+
+                        {% if btn_back %}
+                            <button type="button" class="btn btn-warning" onclick="window.history.back();">
+                                Назад
+                            </button>
+                        {% endif %}
                     </div>
                 </div>
             {% endif %}
@@ -88,8 +93,6 @@
         {% endif %}
 
     {% endfor %}
-
-
 
 {%- endmacro %}
 

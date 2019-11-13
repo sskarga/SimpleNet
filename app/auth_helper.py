@@ -1,6 +1,6 @@
 from functools import wraps
 from flask import url_for, redirect, request, flash, session
-from sqlalchemy.sql import func
+from datetime import datetime
 from flask_login import current_user
 from app.models import User
 from app import db
@@ -20,7 +20,7 @@ def check_user_admin():
 
 def auth_before_request():
     if current_user.is_authenticated:
-        current_user.last_seen = func.now()
+        current_user.last_seen = datetime.utcnow()
         db.session.commit()
     else:
         if request.endpoint != 'auth.login' \

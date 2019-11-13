@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, IntegerField, SelectField
+from wtforms import StringField, IntegerField, SelectField, SubmitField
 from wtforms.validators import Length, IPAddress, NumberRange
 
 
@@ -42,3 +42,5 @@ class LanCreateForm(FlaskForm):
     dns_ipv4 = StringField('DNS', default='192.168.0.1', validators=[
         IPAddress(ipv4=True, ipv6=False, message='Неверный IP адрес'),
     ])
+
+    submit = SubmitField('Сохранить')

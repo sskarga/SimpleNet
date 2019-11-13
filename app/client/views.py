@@ -1,10 +1,10 @@
-from flask import render_template, url_for, redirect, request, jsonify, flash, current_app
+from flask import render_template, url_for, redirect, request, flash, current_app
 from app import db
-from app.models import City, Street, Building, Client, Service, Eqpt, EqptPort, LogClient, NetworkHost, EqptPort
+from app.models import Building, Client, Service, Eqpt, LogClient, NetworkHost, EqptPort
 from . import client_bp
 from sqlalchemy.orm import load_only, joinedload
 from flask_login import current_user
-from sqlalchemy.sql import func
+from datetime import datetime
 from .forms import ClientCreateForm, ClientPersonalInfoForm, ClientServiceInfoForm, ClientAddressForm, \
     ClientPersonalNoteForm
 import ipaddress
@@ -68,7 +68,7 @@ def client_create(building_id):
         # if disconnet
         # TODO: get rid of the "magic" numbers in the condition
         if form.status.data != 1:
-            find_client.suspension_at = func.now()
+            find_client.suspension_at = datetime.utcnow()
         else:
             find_client.suspension_at = None
 
@@ -177,7 +177,7 @@ def client_edit_service(client_id):
         # if disconnet
         # TODO: get rid of the "magic" numbers in the condition
         if form.status.data != 1:
-            find_client.suspension_at = func.now()
+            find_client.suspension_at = datetime.utcnow()
         else:
             find_client.suspension_at = None
 
@@ -285,7 +285,7 @@ def client_relation_delete(client_id):
         port.status = 0
 
     find_client.eqptport_id = None
-    find_client.suspension_at = func.now()
+    find_client.suspension_at = datetime.utcnow()
     log = LogClient(
         client_id=find_client.id,
         initiator_id=current_user.id,

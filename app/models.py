@@ -3,7 +3,7 @@ from flask_login import UserMixin
 from werkzeug.security import generate_password_hash, check_password_hash
 import ipaddress
 from sqlalchemy.ext.hybrid import hybrid_property
-from sqlalchemy.sql import func
+from datetime import datetime
 
 
 # Place -----------------------------------------------------------------------
@@ -239,10 +239,10 @@ class Client(db.Model):
     status = db.Column(db.Integer)
     service_id = db.Column(db.Integer, db.ForeignKey('service.id'))
 
-    create_at = db.Column(db.DateTime(timezone=True), default=func.now())
+    create_at = db.Column(db.DateTime(timezone=True), default=datetime.utcnow())
     last_updated = db.Column(db.DateTime(timezone=True),
-                             default=func.now(),
-                             onupdate=func.now(),)
+                             default=datetime.utcnow(),
+                             onupdate=datetime.utcnow(),)
     suspension_at = db.Column(db.DateTime)
     note = db.Column(db.String(250))
 
@@ -258,7 +258,7 @@ class LogClient(db.Model):
     client_id = db.Column(db.Integer)
     initiator_id = db.Column(db.Integer, default=0)
     username = db.Column(db.String(80))
-    create_at = db.Column(db.DateTime(timezone=True), default=func.now())
+    create_at = db.Column(db.DateTime(timezone=True), default=datetime.utcnow())
     """
         i - info
         e - error
@@ -280,7 +280,7 @@ class User(UserMixin, db.Model):
     password_hash = db.Column(db.String(200))
     is_active = db.Column(db.Boolean, default=False)
     is_admin = db.Column(db.Boolean, default=False)
-    last_seen = db.Column(db.DateTime, default=func.now())
+    last_seen = db.Column(db.DateTime, default=datetime.utcnow())
 
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)

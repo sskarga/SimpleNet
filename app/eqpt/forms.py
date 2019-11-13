@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, IntegerField, SelectField, HiddenField, BooleanField
+from wtforms import StringField, IntegerField, SelectField, HiddenField, SubmitField
 from wtforms.validators import Length, IPAddress, NumberRange, MacAddress, ValidationError
 
 
@@ -41,6 +41,8 @@ class EqptCreateForm(FlaskForm):
                                          message=u'Vlan в не диапазона (1-4000)')
                          ])
 
+    submit = SubmitField('Сохранить')
+
 
 class EqptEditForm(FlaskForm):
 
@@ -79,6 +81,8 @@ class EqptEditForm(FlaskForm):
                                          message=u'Vlan в не диапазона (1-4000)')
                          ])
 
+    submit = SubmitField('Сохранить')
+
 
 class EqptPortCreateForm(FlaskForm):
 
@@ -114,6 +118,8 @@ class EqptPortCreateForm(FlaskForm):
         Length(min=3, max=20),
     ])
 
+    submit = SubmitField('Сохранить')
+
 
 class EqptPortEditForm(FlaskForm):
 
@@ -147,11 +153,15 @@ class EqptPortEditForm(FlaskForm):
         Length(min=3, max=20),
     ])
 
+    submit = SubmitField('Сохранить')
+
 
 class EqptNoteForm(FlaskForm):
     note = StringField('Примечание', validators=[
         Length(min=0, max=199),
     ])
+
+    submit = SubmitField('Сохранить')
 
 
 class EqptModelForm(FlaskForm):
@@ -166,3 +176,5 @@ class EqptModelForm(FlaskForm):
                                          max=50,
                                          message=u'Количество портов для абонентов в не диапазона (1-50)')
                          ])
+
+    submit = SubmitField('Сохранить')

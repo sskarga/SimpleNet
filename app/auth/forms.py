@@ -40,7 +40,7 @@ class EditForm(FlaskForm):
     is_admin = BooleanField('Администратор')
     is_active = BooleanField('Активировать учетную запись')
 
-    submit = SubmitField('Зарегистрировать')
+    submit = SubmitField('Сохранить')
 
 
 class ResetPasswordForm(FlaskForm):
