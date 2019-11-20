@@ -8,9 +8,6 @@ from datetime import datetime
 
 # Place -----------------------------------------------------------------------
 class City(db.Model):
-    """
-    Create an City table
-    """
     __tablename__ = 'city'
 
     id = db.Column(db.Integer, primary_key=True)
@@ -21,13 +18,10 @@ class City(db.Model):
         return "<City: {}>".format(self.name)
 
     def as_dict(self):
-        return {self.id: self.name}
+        return {'id': self.id, 'text': self.name}
 
 
 class Street(db.Model):
-    """
-    Create an Street table
-    """
     __tablename__ = 'street'
 
     id = db.Column(db.Integer, primary_key=True)
@@ -39,13 +33,10 @@ class Street(db.Model):
         return "<Street: {}>".format(self.name)
 
     def as_dict(self):
-        return {self.id: self.name}
+        return {'id': self.id, 'text': self.name}
 
 
 class Building(db.Model):
-    """
-    Create an Building table
-    """
     __tablename__ = 'building'
 
     id = db.Column(db.Integer, primary_key=True)
@@ -56,24 +47,20 @@ class Building(db.Model):
         return "<Building: {}>".format(self.name)
 
     def as_dict(self):
-        return {self.id: self.name}
+        return {'id': self.id, 'text': self.name}
 
 
 # Network ---------------------------------------------------------------------
 class Network(db.Model):
-    """
-    Create an Network table
-    """
     __tablename__ = 'network'
 
-    id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.BigInteger, primary_key=True)
     name = db.Column(db.String(50))
     svlan = db.Column(db.Integer)
-    netlan = db.Column(db.Integer, unique=True)
+    netlan = db.Column(db.BigInteger, unique=True)
     netmask = db.Column(db.Integer)
-    gateway = db.Column(db.Integer)
-    dns = db.Column(db.Integer)
-
+    gateway = db.Column(db.BigInteger)
+    dns = db.Column(db.BigInteger)
     hosts = db.relationship('NetworkHost', backref='network', lazy='dynamic')
 
     @hybrid_property
@@ -105,12 +92,9 @@ class Network(db.Model):
 
 
 class NetworkHost(db.Model):
-    """
-    Create an NetworkHost table
-    """
     __tablename__ = 'networkhost'
 
-    host = db.Column(db.Integer, primary_key=True)
+    host = db.Column(db.BigInteger, primary_key=True)
     network_id = db.Column(db.Integer, db.ForeignKey('network.id'))
     eqptport_id = db.Column(db.Integer, db.ForeignKey('eqptport.id'))
 
@@ -128,9 +112,6 @@ class NetworkHost(db.Model):
 
 # Eqpt ------------------------------------------------------------------------
 class EqptModel(db.Model):
-    """
-    Create an Eqpt model table
-    """
     __tablename__ = 'eqptmodel'
 
     id = db.Column(db.Integer, primary_key=True)
@@ -152,15 +133,13 @@ class Eqpt(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(50))
     building_id = db.Column(db.Integer)
-    ip = db.Column(db.Integer)
+    ip = db.Column(db.BigInteger)
     serial = db.Column(db.String(50))
     mac = db.Column(db.String(20))
     note = db.Column(db.String(200))
-
     network_id = db.Column(db.Integer)
     model_id = db.Column(db.Integer, db.ForeignKey('eqptmodel.id'))
     ports = db.relationship('EqptPort', backref='eqpt', lazy='dynamic')
-
     cvlan = db.Column(db.Integer)
 
     @hybrid_property
@@ -175,10 +154,13 @@ class Eqpt(db.Model):
         return "<EqptModel: {}>".format(self.name)
 
 
+PORT_STATUS = {
+    0: 'ok',
+    -1: 'failing',
+}
+
+
 class EqptPort(db.Model):
-    """
-    Create an Eqpt model table
-    """
     __tablename__ = 'eqptport'
 
     id = db.Column(db.Integer, primary_key=True)
@@ -187,15 +169,7 @@ class EqptPort(db.Model):
     client_on = db.relationship('Client', uselist=False, backref='eqptport')
     port = db.Column(db.Integer)
     cvlan = db.Column(db.Integer)
-    """
-    status:
-        not_work = -1
-        not_use = 0
-        client = 1
-        line = 2
-    """
     status = db.Column(db.Integer)
-
     radius_user = db.Column(db.String(20))
     radius_pass = db.Column(db.String(20))
 
@@ -208,9 +182,7 @@ class Service(db.Model):
     __tablename__ = 'service'
 
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(50))
-    radius_grup_name = db.Column(db.String(20))
-
+    name = db.Column(db.String(50), unique=True)
     clients = db.relationship('Client', backref='service', lazy='dynamic')
 
     def __repr__(self):
@@ -218,27 +190,25 @@ class Service(db.Model):
 
 
 # Client ----------------------------------------------------------------------
+CLIENT_STATUS = {
+    0: 'off',
+    1: 'on',
+    2: 'debt',
+    3: 'pause',
+}
+
+
 class Client(db.Model):
     __tablename__ = 'client'
 
     id = db.Column(db.Integer, primary_key=True)
     building_id = db.Column(db.Integer)
     eqptport_id = db.Column(db.Integer, db.ForeignKey('eqptport.id'))
-
     fio = db.Column(db.String(100))
     phone = db.Column(db.String(50))
     apartment = db.Column(db.String(20))
-
-    """
-    status:
-        off = 0
-        on = 1
-        credit = 2
-        freeze = 3
-    """
     status = db.Column(db.Integer)
     service_id = db.Column(db.Integer, db.ForeignKey('service.id'))
-
     create_at = db.Column(db.DateTime(timezone=True), default=datetime.utcnow())
     last_updated = db.Column(db.DateTime(timezone=True),
                              default=datetime.utcnow(),
@@ -247,10 +217,17 @@ class Client(db.Model):
     note = db.Column(db.String(250))
 
     def __repr__(self):
-        return "<Client: {}>".format(self.fio)
+        return "<#{0}. Client: {1}>".format(self.id, self.fio)
 
 
 # Log Client ----------------------------------------------------------------------
+LOG_EVENT = {
+    'i': 'info',
+    'e': 'error',
+    'w': 'error',
+}
+
+
 class LogClient(db.Model):
     __tablename__ = 'log_client'
 
@@ -259,11 +236,6 @@ class LogClient(db.Model):
     initiator_id = db.Column(db.Integer, default=0)
     username = db.Column(db.String(80))
     create_at = db.Column(db.DateTime(timezone=True), default=datetime.utcnow())
-    """
-        i - info
-        e - error
-        w - warning
-    """
     type = db.Column(db.String(1), default='i')
     event = db.Column(db.String(250))
 
@@ -289,7 +261,7 @@ class User(UserMixin, db.Model):
         return check_password_hash(self.password_hash, password)
 
     def __repr__(self):
-        return '<User {}>'.format(self.username)
+        return '<#{0} .User {1}>'.format(self.id, self.username)
 
 
 @login.user_loader

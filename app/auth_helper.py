@@ -8,13 +8,13 @@ from app import db
 
 def check_user_admin():
     if User.query.filter_by(username='admin').first() is None:
-        user = User(
+        user_admin = User(
             name='admin',
             username='admin',
             is_admin=True,
             is_active=True)
-        user.set_password('admin')
-        db.session.add(user)
+        user_admin.set_password('admin')
+        db.session.add(user_admin)
         db.session.commit()
 
 

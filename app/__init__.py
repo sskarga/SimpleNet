@@ -38,23 +38,26 @@ def create_app():
     from app.auth import auth_bp as auth_route
     app.register_blueprint(auth_route)
 
-    from .home import home as home_blueprint
+    from app.home import home as home_blueprint
     app.register_blueprint(home_blueprint)
 
-    from .api import api_bp as api_route
+    from app.api import api_bp as api_route
     app.register_blueprint(api_route)
 
-    from .place import place_bp as place_route
+    from app.place import place_bp as place_route
     app.register_blueprint(place_route)
 
-    from .client import client_bp as client_route
+    from app.client import client_bp as client_route
     app.register_blueprint(client_route)
 
-    from .eqpt import eqpt_bp as eqpt_route
+    from app.eqpt import eqpt_bp as eqpt_route
     app.register_blueprint(eqpt_route)
 
-    from .lan import lan_bp as lan_route
+    from app.lan import lan_bp as lan_route
     app.register_blueprint(lan_route)
+
+    from app.service import bp as service_route
+    app.register_blueprint(service_route)
 
     if not app.debug and not app.testing:
 

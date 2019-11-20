@@ -31,15 +31,37 @@
             rightAlign: false
         })
 
+        function pad(a,b){return(1e15+a+"").slice(-b)}
+
         function radiusFields() {
-            $('#radius_user').val($('#svlan').val() + '.' + $('#cvlan').val());
-            $('#radius_pass').val($('#svlan').val() + '.' + $('#cvlan').val());
+            let valRadius = '';
+            let serverVlan = parseInt($("#svlan").val(), 10);
+            let clientVlan = parseInt($("#cvlan").val(), 10);
+
+            if (serverVlan == clientVlan) {
+                let eqptMAC = $("#mac").val()
+                let portNumber = parseInt($("#port").val(), 10);
+                valRadius = eqptMAC + '-' + pad(portNumber, 2)
+            } else {
+                valRadius = serverVlan.toString() + '.' + clientVlan.toString()
+            };
+
+            $('#radius_user').val(valRadius);
+            $('#radius_pass').val(valRadius);
+
         };
 
         function get_cvlan() {
             let vlanStart = parseInt($("#eqptcvlan").val(), 10);
-            let portNumber = parseInt($("#port").val(), 10) - 1;
-            $("#cvlan").val(vlanStart + portNumber);
+
+            // if vlan < 100 then no vlan-per-user
+            if (vlanStart >= 100) {
+                let portNumber = parseInt($("#port").val(), 10) - 1;
+                $("#cvlan").val(vlanStart + portNumber);
+            } else {
+                $("#cvlan").val(vlanStart);
+            };
+
         };
 
         get_cvlan();

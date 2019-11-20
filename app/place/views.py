@@ -147,7 +147,8 @@ def street_delete(street_id):
     if count_building > 0:
         flash(
             Markup(
-                'Невозможно удалить улицу/район. Удалите сначала <a href="{0}" class="alert-link">дома - {1}</a>.'.format(
+                'Невозможно удалить улицу/район. '
+                'Удалите сначала <a href="{0}" class="alert-link">дома - {1}</a>.'.format(
                     url_for('.building_view', street_id=street_id), count_building,
             )), 'danger')
     else:
@@ -240,14 +241,16 @@ def building_delete(building_id):
     if count_client > 0:
         flash(
             Markup(
-                'Невозможно удалить дом. Удалите сначала <a href="{0}" class="alert-link" target="_blank">клиентов - {1}</a>.'.format(
+                'Невозможно удалить дом. Удалите сначала '
+                '<a href="{0}" class="alert-link" target="_blank">клиентов - {1}</a>.'.format(
                     url_for('client_bp.client_search_by_building', building_id=building_id), count_client,
             )), 'danger')
 
     if count_eqpts > 0:
         flash(
             Markup(
-                'Невозможно удалить дом. Удалите сначала <a href="{0}" class="alert-link" target="_blank">оборудование - {1}</a>.'.format(
+                'Невозможно удалить дом. Удалите сначала '
+                '<a href="{0}" class="alert-link" target="_blank">оборудование - {1}</a>.'.format(
                     url_for('eqpt_bp.eqpt_search_by_building', building_id=building_id), count_eqpts,
             )), 'danger')
 

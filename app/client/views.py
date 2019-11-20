@@ -28,6 +28,8 @@ def client_search_by_port(eqptport_id):
     Render the index template on the / route
     """
     building = []
+    clients = None
+
     if Client.query.filter_by(eqptport_id=eqptport_id).scalar() is not None:
         clients = Client.query.filter_by(eqptport_id=eqptport_id)
         building = Building.query.options(joinedload('street').joinedload('city')).get(clients[0].building_id)
@@ -68,9 +70,9 @@ def client_create(building_id):
         # if disconnet
         # TODO: get rid of the "magic" numbers in the condition
         if form.status.data != 1:
-            find_client.suspension_at = datetime.utcnow()
+            client.suspension_at = datetime.utcnow()
         else:
-            find_client.suspension_at = None
+            client.suspension_at = None
 
         db.session.add(client)
         db.session.flush()
@@ -351,6 +353,7 @@ def client_search():
     page = request.args.get('page', 1, type=int)
 
     find_client = None
+    title = None
 
     if search_by == 'wait':
         find_client = Client.query.filter_by(status=1, eqptport_id=None).paginate(
