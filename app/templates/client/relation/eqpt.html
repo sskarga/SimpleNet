@@ -56,19 +56,14 @@
                                     <form>
                                         <div class="modal-body">
 
-                                            <div class="form-group">
-                                                <select name="city" id="city" class="custom-select">
-                                                </select>
+                                            <div class="col mb-3">
+                                                <select id="сities" class="custom-select"></select>
                                             </div>
-                                            <div class="form-group">
-                                                <select name="street" id="street" class="custom-select">
-                                                    <option value="">Выберите улицу/район</option>
-                                                </select>
+                                            <div class="col mb-3">
+                                                <select id="street" class="custom-select"></select>
                                             </div>
-                                            <div class="form-group">
-                                                <select name="building" id="building" class="custom-select">
-                                                    <option value="">Выберите сооружение</option>
-                                                </select>
+                                            <div class="col mb-3">
+                                                <select id="building" class="custom-select"></select>
                                             </div>
 
                                         </div>
@@ -108,7 +103,8 @@
                                 <td>{{ eqpt.ipv4 }}</td>
                                 <td>{{ eqpt.eqptmodel.name }}</td>
                                 <td>{{ eqpt.mac }}</td>
-                                <td><a href="{{ url_for('.client_relation_eqpt_ports', client_id=client.id, eqpt_id=eqpt.id) }}"
+                                <td>
+                                    <a href="{{ url_for('.client_relation_eqpt_ports', client_id=client.id, eqpt_id=eqpt.id) }}"
                                        class="btn btn-sm btn-info">Выбрать</a>
                                 </td>
                             </tr>
@@ -137,12 +133,11 @@
 
         $('#building').change(function () {
             let building_id = $('#building').val();
-            if ((building_id) && (building_id > 0)){
-                let baseurl = window.location.pathname.split("/").slice(1,-1).join("/");
-                $('#searchBuilding').attr("href", "/"+baseurl+"/"+building_id);
+            if ((building_id) && (building_id > 0)) {
+                let baseurl = window.location.pathname.split("/").slice(1, -1).join("/");
+                $('#searchBuilding').attr("href", "/" + baseurl + "/" + building_id);
                 $('#searchBuilding').removeClass("disabled");
-            }
-            else {
+            } else {
                 $('#searchBuilding').attr("href", "#");
                 $('#searchBuilding').addClass(" disabled");
             }

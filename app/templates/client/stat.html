@@ -11,14 +11,8 @@
                 <div class="row mb-3">
                     <div class="col-sm-9">
                         <h4 class="header-title mb-3 ">
-                            Подсеть:
-                            <small class="text-muted">
-                                {{ network.name }}
-                            </small>
+                            Статистика по клиентам:
                         </h4>
-                    </div>
-                    <div class="col-sm-3 float-right">
-                        <a class="btn btn-success float-right" href="{{ url_for('.show_lan') }}">Назад</a>
                     </div>
                 </div>
 
@@ -49,19 +43,34 @@
         new Chart(document.getElementById("doughnut-chart"), {
             type: 'doughnut',
             data: {
-                labels: ["Использовано " + {{ host_count - host_free }}, "Свободно " +{{ host_free }}],
+                labels: [
+                    "Подключено ",
+                    "Отключено ",
+                    "Должники ",
+                    "Пауза ",
+                    ],
                 datasets: [
                     {
-                        label: "Подсеть {{ network.name }}",
-                        backgroundColor: ["#CC0000", "#00CC33"],
-                        data: [{{ host_count - host_free }}, {{ host_free }}]
+                        label: "Клиентов - {{ cl_connect + cl_off + cl_debt + cl_pause }}",
+                        backgroundColor: [
+                            "#00CC33",
+                            "#CC0000",
+                            "#ffb207",
+                            "#c3ff17",
+                        ],
+                        data: [
+                            {{ cl_connect }},
+                            {{ cl_off }},
+                            {{ cl_debt }},
+                            {{ cl_pause }},
+                        ]
                     }
                 ]
             },
             options: {
                 title: {
                     display: true,
-                    text: 'Использование ip адресов'
+                    text: 'Клиентов - {{ cl_connect + cl_off + cl_debt + cl_pause }}'
                 }
             }
         });

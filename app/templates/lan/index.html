@@ -21,6 +21,7 @@
                     <div class="col-sm-3 float-right">
                         {% if current_user.is_admin %}
                             <a class="btn btn-success float-right" href="{{ url_for('.lan_create') }}">Добавить</a>
+                            <a class="btn btn-danger float-right mx-2" href="{{ url_for('.ip_delete') }}">Удалить IP</a>
                         {% endif %}
                     </div>
                 </div>

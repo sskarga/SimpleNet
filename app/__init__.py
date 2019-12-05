@@ -9,6 +9,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
 from flask_moment import Moment
 from flask_debugtoolbar import DebugToolbarExtension
+from config import Config
 
 # db variable initialization
 db = SQLAlchemy()
@@ -18,9 +19,9 @@ login = LoginManager()
 login.login_view = 'auth.login'
 
 
-def create_app():
+def create_app(config_class=Config):
     app = Flask(__name__, instance_relative_config=False)
-    app.config.from_object('config.Config')
+    app.config.from_object(config_class)
 
     db.init_app(app)
     toolbar.init_app(app)
@@ -30,7 +31,7 @@ def create_app():
     migrate = Migrate(app, db)
 
     from app import models
-    from app.auth_helper import check_user_admin, auth_before_request
+    from app.auth_helper import auth_before_request
 
     from app.errors import bp as errors_bp
     app.register_blueprint(errors_bp)
@@ -74,9 +75,6 @@ def create_app():
         app.logger.setLevel(logging.INFO)
         app.logger.info('SimpleNet startup')
 
-    app.before_first_request(check_user_admin)
     app.before_request(auth_before_request)
 
     return app
-
-

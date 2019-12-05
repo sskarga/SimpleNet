@@ -76,7 +76,7 @@ table {
   vertical-align: middle;
 }
 .table-format tr th:last-child {
-  width: 200px;
+  /*width: 200px;*/
   text-align: center;
   vertical-align: middle;
 }

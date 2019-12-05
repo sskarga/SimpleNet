@@ -7,6 +7,7 @@ from . import eqpt_bp
 import ipaddress
 from datetime import datetime
 from app.auth_helper import requires_admin
+from app.freeradius import rad_add, rad_delete, rad_update_group, rad_disconnect
 
 
 port_status = [(0, 'Рабочий'), (-1, 'Неисправный')]
@@ -187,7 +188,14 @@ def port_create(eqpt_id):
             eqpt_port.ip = check_ip
 
             db.session.add(eqpt_port)
+            db.session.flush()
+            db.session.refresh(eqpt_port)
+
+            port_id = eqpt_port.id
             db.session.commit()
+
+            # Radius
+            rad_add(port_id)
 
             flash('Новый порт добавлен.', 'success')
             return redirect(url_for('.port_search_by_eqpt', eqpt_id=eqpt_id))
@@ -221,6 +229,8 @@ def port_edit(id):
 
     if form.validate_on_submit():
 
+        check_ip = None
+
         if edit_port.ip.host_ipv4 != form.ipv4.data:
             check_ip = NetworkHost.query.filter_by(
                 network_id=network_lan.id,
@@ -237,6 +247,17 @@ def port_edit(id):
         edit_port.port = form.port.data
         edit_port.cvlan = form.cvlan.data
         edit_port.status = form.status.data
+
+        # Radius
+        if (edit_port.radius_user != form.radius_user.data) or \
+                (edit_port.radius_pass != form.radius_pass.data) or check_ip:
+            msg = rad_disconnect(id)
+            flash(msg, 'warning')
+            rad_delete(id)
+            rad_add(id)
+            rad_update_group(id)
+            flash('Обновлены настройки radius.', 'success')
+
         edit_port.radius_user = form.radius_user.data
         edit_port.radius_pass = form.radius_pass.data
         db.session.commit()
@@ -263,6 +284,11 @@ def port_delete(id):
         db.session.flush()
         db.session.refresh(find_client)
         db.session.refresh(del_port)
+
+        # Radius
+        msg = rad_disconnect(id)
+        flash(msg, 'warning')
+        rad_delete(id)
 
         flash('Клиент #{0} был отключен.'.format(find_client.id), 'warning')
 

@@ -10,7 +10,7 @@
         <div class="col-xl-12">
             <div class="card-box">
                 <div class="row mb-3">
-                    <div class="col-sm-9">
+                    <div class="col-lg-9 col-sm-12">
                         <h4 class="header-title mb-3 ">
                             Оборудование:
                             <small class="text-muted">
@@ -20,7 +20,7 @@
                             </small>
                         </h4>
                     </div>
-                    <div class="col-sm-3 float-right">
+                    <div class="col-lg-3 col-sm-12 float-right">
                         <a class="btn btn-success float-right" href="{{ url_for('.eqpt_create', building_id=building.id) }}">Добавить</a>
                         <a class="btn btn-primary float-right mx-2" href="{{ url_for('eqpt_bp.eqpt_search_form') }}">Поиск</a>
                     </div>
@@ -34,7 +34,7 @@
                             <th>Имя</th>
                             <th>IP адрес</th>
                             <th>Модель</th>
-                            <th>MAC</th>
+                            <th class="d-md-none">MAC</th>
                             <th>Порты</th>
                             <th>Операции</th>
                         </tr>
@@ -45,7 +45,7 @@
                                 <td>{{ eqpt.name }}</td>
                                 <td>{{ eqpt.ipv4 }}</td>
                                 <td>{{ eqpt.eqptmodel.name }}</td>
-                                <td>{{ eqpt.mac }}</td>
+                                <td class="d-md-none">{{ eqpt.mac }}</td>
                                 <td><a href="{{ url_for('.port_search_by_eqpt', eqpt_id=eqpt.id) }}"
                                        class="btn btn-sm btn-info">Показать</a></td>
                                 <td>

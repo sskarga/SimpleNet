@@ -1,59 +1,87 @@
 const apiSearchPlace = "/api/v1.0/places/";
 
+/*
+let checkCity = localStorage.getItem('cities');
+
+if (checkCity) {
+    dataCity = JSON.parse(localStorage.getItem("cities"));
+} else {
+    $.getJSON(apiSearchPlace + "сities")
+        .done(function (json) {
+            dataCity = json.results;
+            localStorage.setItem("cities", JSON.stringify(json.results));
+        })
+        .fail(function (jqxhr, textStatus, error) {
+            var err = textStatus + ', ' + error;
+            console.log("Request Failed: " + err);
+        });
+}
+;
+*/
 jQuery(document).ready(function ($) {
 
-        $('#сities').select2({
-            language: "ru",
-            theme: "bootstrap",
-            placeholder: "Выберите город",
-            allowClear: true,
-            ajax: {
-                url: apiSearchPlace + "сities",
-                dataType: 'json',
-                quietMillis: 250,
-                cache: true,
-            },
-        });
-
-        $('#street').select2({
-            language: "ru",
-            theme: "bootstrap",
-            placeholder: "Выберите улицу/район",
-            allowClear: true,
-            minimumInputLength: 2,
-            ajax: {
-                url: apiSearchPlace + "streets",
-                dataType: 'json',
-                quietMillis: 250,
-                cache: true,
-                data: function (params) {
-                    return {
-                        q: params.term,
-                        id: $('#сities').val(),
-                    };
+            $('#сities').select2({
+                language: "ru",
+                theme: "bootstrap",
+                placeholder: "Выберите город",
+                allowClear: true,
+                ajax: {
+                    url: apiSearchPlace + "сities",
+                    dataType: 'json',
+                    quietMillis: 250,
+                    cache: true,
                 },
-            },
-        });
+            });
+    /*
+    $('#сities').select2({
+        language: "ru",
+        theme: "bootstrap",
+        placeholder: "Выберите город",
+        allowClear: true,
+        data: dataCity,
+    });
+*/
 
-        $('#building').select2({
-            language: "ru",
-            theme: "bootstrap",
-            placeholder: "Выберите дом",
-            allowClear: true,
-            minimumInputLength: 1,
-            ajax: {
-                url: apiSearchPlace + "buildings",
-                dataType: 'json',
-                quietMillis: 250,
-                cache: true,
-                data: function (params) {
-                    return {
-                        q: params.term,
-                        id: $('#street').val(),
-                    };
-                },
+    $('#street').select2({
+        language: "ru",
+        theme: "bootstrap",
+        placeholder: "Выберите улицу/район",
+        allowClear: true,
+        minimumInputLength: 2,
+        ajax: {
+            url: apiSearchPlace + "streets",
+            dataType: 'json',
+            quietMillis: 250,
+            cache: true,
+            data: function (params) {
+                return {
+                    q: params.term,
+                    id: $('#сities').val(),
+                };
             },
-        });
+        },
+    });
+
+
+    $('#building').select2({
+        language: "ru",
+        theme: "bootstrap",
+        placeholder: "Выберите дом",
+        allowClear: true,
+        minimumInputLength: 1,
+        ajax: {
+            url: apiSearchPlace + "buildings",
+            dataType: 'json',
+            quietMillis: 250,
+            cache: true,
+            data: function (params) {
+                return {
+                    q: params.term,
+                    id: $('#street').val(),
+                };
+            },
+        },
+    });
 
     $('#сities').change(function () {
         $(".search-building").addClass(" disabled");

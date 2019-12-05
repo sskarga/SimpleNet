@@ -1,6 +1,6 @@
 from flask import render_template, url_for, redirect, request, flash, current_app
 from app import db
-from app.models import Building, Client, Service, Eqpt, LogClient, NetworkHost, EqptPort
+from app.models import Building, Client, Service, Eqpt, LogClient, NetworkHost, EqptPort, RadPostAuth, RadAcct, CLIENT_STATUS
 from . import client_bp
 from sqlalchemy.orm import load_only, joinedload
 from flask_login import current_user
@@ -8,6 +8,7 @@ from datetime import datetime
 from .forms import ClientCreateForm, ClientPersonalInfoForm, ClientServiceInfoForm, ClientAddressForm, \
     ClientPersonalNoteForm
 import ipaddress
+from app.freeradius import rad_add, rad_delete, rad_update_group, rad_disconnect
 
 client_status = ('Отключен', 'Подключен', 'Долг', 'Пауза')
 
@@ -71,8 +72,8 @@ def client_create(building_id):
         # TODO: get rid of the "magic" numbers in the condition
         if form.status.data != 1:
             client.suspension_at = datetime.utcnow()
-        else:
-            client.suspension_at = None
+        # else:
+        #    client.suspension_at = None
 
         db.session.add(client)
         db.session.flush()
@@ -84,7 +85,7 @@ def client_create(building_id):
             event='Добавлен новый клиент. ФИО: {0}. Статус - {1}, сервис {2}'.format(
                 client.fio,
                 client_status[client.status],
-                available_services[client.service_id].name,
+                Service.query.get(client.service_id).name,
             )
         )
 
@@ -176,12 +177,15 @@ def client_edit_service(client_id):
         find_client.service_id = form.service_id.data
         find_client.status = form.status.data
 
-        # if disconnet
-        # TODO: get rid of the "magic" numbers in the condition
-        if form.status.data != 1:
+        if form.status.data != CLIENT_STATUS['on']:
             find_client.suspension_at = datetime.utcnow()
         else:
             find_client.suspension_at = None
+
+        # Radius
+        msg = rad_disconnect(find_client.eqptport_id)
+        flash(msg, 'warning')
+        rad_update_group(find_client.eqptport_id)
 
         log = LogClient(
             client_id=find_client.id,
@@ -189,7 +193,7 @@ def client_edit_service(client_id):
             username=current_user.name,
             event='Изменения. Статус - {0}, сервис - {1}'.format(
                 client_status[form.status.data],
-                services[form.service_id.data].name,
+                Service.query.get(find_client.service_id).name,
             )
         )
 
@@ -257,10 +261,21 @@ def client_relation_create(client_id, port_id):
         port = EqptPort.query.get(find_client.eqptport_id)
         port.status = 0
 
+        # Radius
+        msg = rad_disconnect(port.id)
+        flash(msg, 'warning')
+        rad_delete(port.id)
+
     find_client.eqptport_id = port_id
     find_client.suspension_at = None
     client_port = EqptPort.query.get(port_id)
     client_port.status = 1
+
+    # Radius
+    rad_update_group(client_port.id)
+    msg = rad_disconnect(client_port.id)
+    flash(msg, 'warning')
+
     log = LogClient(
         client_id=find_client.id,
         initiator_id=current_user.id,
@@ -285,6 +300,11 @@ def client_relation_delete(client_id):
     if find_client.eqptport_id is not None:
         port = EqptPort.query.get(find_client.eqptport_id)
         port.status = 0
+
+        # Radius
+        msg = rad_disconnect(port.id)
+        flash(msg, 'warning')
+        rad_delete(port.id)
 
     find_client.eqptport_id = None
     find_client.suspension_at = datetime.utcnow()
@@ -313,6 +333,11 @@ def client_delete(client_id):
     if find_client.eqptport_id is not None:
         port = EqptPort.query.get(find_client.eqptport_id)
         port.status = 0
+
+        # Radius
+        msg = rad_disconnect(port.id)
+        flash(msg, 'warning')
+        rad_delete(port.id)
 
     find_client.eqptport_id = None
     db.session.flush()
@@ -343,6 +368,81 @@ def client_log(client_id):
         logs=logs.items,
         next_url=next_url,
         prev_url=prev_url
+    )
+
+
+@client_bp.route('/<int:client_id>/radauth', methods=['GET'])
+def client_radauth(client_id):
+    page = request.args.get('page', 1, type=int)
+
+    cl = Client.query.get(client_id)
+    port = EqptPort.query.get(cl.eqptport_id)
+
+    logs = RadPostAuth.query\
+        .filter_by(username=port.radius_user)\
+        .order_by(RadPostAuth.id.desc())\
+        .paginate(page, current_app.config['PAGINATE_PAGE'], False)
+
+    next_url = url_for('.client_log', client_id=client_id, page=logs.next_num) \
+        if logs.has_next else None
+    prev_url = url_for('.client_log', client_id=client_id, page=logs.prev_num) \
+        if logs.has_prev else None
+
+    return render_template(
+        'client/radius/radpostauth.html',
+        client_id=client_id,
+        items=logs.items,
+        next_url=next_url,
+        prev_url=prev_url
+    )
+
+
+@client_bp.route('/<int:client_id>/radacct', methods=['GET'])
+def client_radacct(client_id):
+    page = request.args.get('page', 1, type=int)
+
+    cl = Client.query.get(client_id)
+    port = EqptPort.query.get(cl.eqptport_id)
+
+    logs = RadAcct.query\
+        .filter_by(username=port.radius_user)\
+        .order_by(RadAcct.radacctid.desc())\
+        .paginate(page, current_app.config['PAGINATE_PAGE'], False)
+
+    next_url = url_for('.client_log', client_id=client_id, page=logs.next_num) \
+        if logs.has_next else None
+    prev_url = url_for('.client_log', client_id=client_id, page=logs.prev_num) \
+        if logs.has_prev else None
+
+    return render_template(
+        'client/radius/radacct.html',
+        client_id=client_id,
+        items=logs.items,
+        port_id=cl.eqptport_id,
+        next_url=next_url,
+        prev_url=prev_url
+    )
+
+@client_bp.route('/<int:client_id>/reset-session/<int:port_id>', methods=['GET'])
+def client_session_disconnect(client_id, port_id):
+    msg = rad_disconnect(port_id)
+    flash(msg, 'warning')
+    return redirect(url_for('.client_radacct', client_id=client_id))
+
+
+@client_bp.route('/stat')
+def client_stat():
+    cl_connect = Client.query.filter_by(status=CLIENT_STATUS['on']).count()
+    cl_off = Client.query.filter_by(status=CLIENT_STATUS['off']).count()
+    cl_debt = Client.query.filter_by(status=CLIENT_STATUS['debt']).count()
+    cl_pause = Client.query.filter_by(status=CLIENT_STATUS['pause']).count()
+
+    return render_template(
+        'client/stat.html',
+        cl_connect=cl_connect,
+        cl_off=cl_off,
+        cl_debt=cl_debt,
+        cl_pause=cl_pause,
     )
 
 

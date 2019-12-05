@@ -191,3 +191,4 @@ dmypy.json
 *.rar
 doc/
 /app.db
+/migrations/

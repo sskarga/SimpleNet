@@ -4,6 +4,7 @@ from datetime import datetime
 from flask_login import current_user
 from app.models import User
 from app import db
+import click
 
 
 def check_user_admin():
@@ -16,6 +17,9 @@ def check_user_admin():
         user_admin.set_password('admin')
         db.session.add(user_admin)
         db.session.commit()
+        click.echo("Admin user create. Login: admin, pas: admin.")
+    else:
+        click.echo("Admin account exists")
 
 
 def auth_before_request():

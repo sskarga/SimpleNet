@@ -6,7 +6,7 @@ basedir = path.abspath(path.dirname(__file__))
 load_dotenv(path.join(basedir, '.env'))
 
 
-class Config:
+class Config(object):
     """Set Flask configuration vars from .env file."""
 
     # General Config
@@ -27,6 +27,11 @@ class Config:
     BOOTSTRAP_SERVE_LOCAL = True
 
     PAGINATE_PAGE = 25
+
+    # Radius config
+    RADIUS_ADDRESS = environ.get('RADIUS_ADDRESS', '127.0.0.1')
+    RADIUS_SECRET = environ.get('RADIUS_SECRET', b"Kah3choteereethiejeimaeziecumi")
+    RADIUS_TIMEOUT = 30
 
     # Static Assets
     # STATIC_FOLDER = environ.get('STATIC_FOLDER')

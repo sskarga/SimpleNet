@@ -9,10 +9,10 @@
         <div class="col-sm-12">
             <div class="card-box">
                 <div class="row">
-                    <div class="col-sm-6">
+                    <div class="col-lg-6 col-sm-12">
                         <h2><i class="fas fa-user"></i> Клиент: #{{ client.id }}</h2>
                     </div>
-                    <div class="col-sm-6">
+                    <div class="col-lg-6 col-sm-12">
                         <a class="btn btn-warning float-right"
                            href="{{ url_for('client_bp.client_search_by_building', building_id=building.id) }}"><i class="fas fa-undo"></i> Вернуться</a>
                         <a class="btn btn-primary float-right mx-2"
@@ -310,11 +310,11 @@
                     <a class="btn btn-primary btn-sm" href="{{ url_for('.client_log', client_id=client.id) }}">
                         Услуги
                     </a>
-                    <a class="btn btn-primary btn-sm ml-3" href="#">
+                    <a class="btn btn-primary btn-sm ml-3" href="{{ url_for('.client_radauth', client_id=client.id) }}">
                         Авторизация
                     </a>
-                    <a class="btn btn-primary btn-sm ml-3" href="#">
-                        Трафик
+                    <a class="btn btn-primary btn-sm ml-3" href="{{ url_for('.client_radacct', client_id=client.id) }}">
+                        Сессии
                     </a>
 
                 </div>

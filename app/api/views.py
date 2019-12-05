@@ -1,4 +1,4 @@
-from flask import jsonify, make_response, request, json
+from flask import jsonify, make_response, request
 from app.models import City, Street, Building
 from . import api_bp
 

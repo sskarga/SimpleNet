@@ -1,10 +1,12 @@
 from flask import render_template, redirect, flash, url_for, Markup
 from app import db
 from app.models import Network, NetworkHost
-from .forms import LanCreateForm
+from .forms import LanCreateForm, LanDeleteIpForm
 from . import lan_bp
 import ipaddress
 from app.auth_helper import requires_admin
+
+from sqlalchemy import and_
 
 
 # generate list hosts except atewayhost
@@ -112,3 +114,44 @@ def lan_delete(id):
                 )), 'danger')
 
     return redirect(url_for('.show_lan'))
+
+
+@lan_bp.route('ip/delete', methods=['GET', 'POST'])
+@requires_admin
+def ip_delete():
+    form = LanDeleteIpForm()
+
+    if form.validate_on_submit():
+        try:
+            ip_start = int(ipaddress.IPv4Address(form.ipstart.data))
+            ip_end = int(ipaddress.IPv4Address(form.ipend.data))
+            ip_all_count = NetworkHost.query \
+                .filter(and_((NetworkHost.host>=ip_start), (NetworkHost.host<=ip_end))) \
+                .count()
+
+            if ip_all_count is not 0:
+
+                ip_free_count = NetworkHost.query\
+                    .filter_by(eqptport_id=None) \
+                    .filter(and_((NetworkHost.host >= ip_start), (NetworkHost.host <= ip_end))) \
+                    .count()
+
+                if ip_all_count == ip_free_count:
+                    ip = NetworkHost.query\
+                        .filter_by(eqptport_id=None) \
+                        .filter(and_((NetworkHost.host >= ip_start), (NetworkHost.host <= ip_end))) \
+                        .delete()
+                    db.session.commit()
+                    flash('{0} ip адреса удалены.'.format(ip_all_count), 'success')
+                else:
+                    flash('Ошибка удаления IP. Занято клиентами - {0}, запрошено удалить - {1} ip адресов.'
+                          .format(ip_all_count - ip_free_count, ip_all_count), 'danger')
+            else:
+                flash('IP адреса не найдены', 'danger')
+
+        except:
+            flash('Ошибка удаления IP', 'danger')
+
+        return redirect(url_for('.show_lan'))
+
+    return render_template('lan/form.html', form=form, title='Удаление ip адресов из пула.')

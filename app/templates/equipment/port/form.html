@@ -38,7 +38,7 @@
             let serverVlan = parseInt($("#svlan").val(), 10);
             let clientVlan = parseInt($("#cvlan").val(), 10);
 
-            if (serverVlan == clientVlan) {
+            if (clientVlan == 1) {
                 let eqptMAC = $("#mac").val()
                 let portNumber = parseInt($("#port").val(), 10);
                 valRadius = eqptMAC + '-' + pad(portNumber, 2)
@@ -55,7 +55,7 @@
             let vlanStart = parseInt($("#eqptcvlan").val(), 10);
 
             // if vlan < 100 then no vlan-per-user
-            if (vlanStart >= 100) {
+            if (vlanStart >= 1) {
                 let portNumber = parseInt($("#port").val(), 10) - 1;
                 $("#cvlan").val(vlanStart + portNumber);
             } else {

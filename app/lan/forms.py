@@ -1,6 +1,6 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, IntegerField, SelectField, SubmitField
-from wtforms.validators import Length, IPAddress, NumberRange
+from wtforms.validators import Length, IPAddress, NumberRange, ValidationError
 
 
 class LanCreateForm(FlaskForm):
@@ -42,5 +42,25 @@ class LanCreateForm(FlaskForm):
     dns_ipv4 = StringField('DNS', default='192.168.0.1', validators=[
         IPAddress(ipv4=True, ipv6=False, message='Неверный IP адрес'),
     ])
+
+    submit = SubmitField('Сохранить')
+
+
+class LanDeleteIpForm(FlaskForm):
+    ipstart = StringField('Начальный IP', default='0.0.0.0', validators=[
+        IPAddress(ipv4=True, ipv6=False, message='Неверный IP адрес'),
+    ])
+
+    ipend = StringField('Конечный IP', default='0.0.0.0', validators=[
+        IPAddress(ipv4=True, ipv6=False, message='Неверный IP адрес'),
+    ])
+
+    def validate_ipstart(self, ip):
+        if ip.data == '0.0.0.0':
+            raise ValidationError('Неверный IP адрес')
+
+    def validate_ipend(self, ip):
+        if ip.data == '0.0.0.0':
+            raise ValidationError('Неверный IP адрес')
 
     submit = SubmitField('Сохранить')
